@@ -70,7 +70,7 @@ export function CreateOnCall() {
         if (!serial) return;
 
         try {
-            const response = await axios.get(`http://localhost:3000/api/machine?serialNo=${serial}`);
+            const response = await axios.get(`http://82.112.227.86:3000/api/machine?serialNo=${serial}`);
 
             if (response.data.length > 0) {
                 const machine = response.data[0];
@@ -93,7 +93,7 @@ export function CreateOnCall() {
 
     const fetchAvailableModels = async (keyword) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get("http://82.112.227.86:3000/api/machine");
             const machines = response.data;
     
             const filteredModels = machines
@@ -110,7 +110,7 @@ export function CreateOnCall() {
     
     const fetchAvailableCabangs = async (keyword) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get("http://82.112.227.86:3000/api/machine");
             const machines = response.data;
     
             const filteredCabangs = machines
@@ -136,7 +136,7 @@ export function CreateOnCall() {
         };        
     
         try {
-            await axios.post("http://localhost:3000/api/clients", dataToSubmit, {
+            await axios.post("http://82.112.227.86:3000/api/clients", dataToSubmit, {
                 headers: { "Content-Type": "application/json" }
             });
     
@@ -170,7 +170,7 @@ export function CreateOnCall() {
 
     const fetchAvailableSerials = async ({ model, namacabang }) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get("http://82.112.227.86:3000/api/machine");
             const allMachines = response.data;
     
             const filtered = allMachines.filter(machine => {

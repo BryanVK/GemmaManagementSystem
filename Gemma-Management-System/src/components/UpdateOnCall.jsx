@@ -52,7 +52,7 @@ export function UpdateOnCall({ client, onClose }) {
         };
 
         try {
-            await axios.put(`http://localhost:3000/api/clients/${client.id}`, updatedData, {
+            await axios.put(`http://82.112.227.86:3000/api/clients/${client.id}`, updatedData, {
                 headers: { "Content-Type": "application/json" }
             });
 

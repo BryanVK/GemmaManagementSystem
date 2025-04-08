@@ -22,7 +22,7 @@ export function OnCall() {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/clients");
+            const response = await axios.get("http://82.112.227.86:3000/api/clients");
             const sortedData = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
             setTableData(sortedData); 
         } catch (err) {
