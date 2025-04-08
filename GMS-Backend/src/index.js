@@ -18,6 +18,7 @@ app.use(express.json());
 app.use('/api', clientRoutes);
 
 // Start server
-app.listen(port, () => {
-  console.log("listening on port 3000");
+app.listen(port, '0.0.0.0', () => {
+    console.log("listening on port 3000")
 });
+
