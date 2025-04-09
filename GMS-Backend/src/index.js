@@ -7,7 +7,7 @@ const port = 3000;
 
 // Middleware
 app.use(cors({
-  origin: 'http://82.112.227.86:5174', // alamat frontend kamu
+  origin: '*', // alamat frontend kamu
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type'],
 }));
