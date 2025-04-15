@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa"; 
+import { FaEdit, FaHistory } from "react-icons/fa"; 
 import { UpdateOnCall } from "./UpdateOnCall";
+import { HistoryOnCall } from "./HistoryOnCall";
 import * as XLSX from "xlsx";
 
 export function OnCall() {
@@ -12,7 +14,9 @@ export function OnCall() {
     const [searchQuery, setSearchQuery] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-
+    const [selectedStatus, setSelectedStatus] = useState("All");
+    const [showHistory, setShowHistory] = useState(false); // State to control history modal visibility
+    const [modalType, setModalType] = useState(""); // "edit" atau "history"
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -20,9 +24,22 @@ export function OnCall() {
         fetchData();
     }, []);
 
+    const getLatestEntriesByNo = (data) => {
+        const latestMap = new Map();
+    
+        data.forEach(item => {
+            const existing = latestMap.get(item.no);
+            if (!existing || new Date(item.date) > new Date(existing.date)) {
+                latestMap.set(item.no, item);
+            }
+        });
+    
+        return Array.from(latestMap.values());
+    };
+    
     const fetchData = async () => {
         try {
-            const response = await axios.get("http://82.112.227.86:5173/api/clients");
+            const response = await axios.get("http://localhost:3000/api/clients");
             const sortedData = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
             setTableData(sortedData); 
         } catch (err) {
@@ -31,9 +48,16 @@ export function OnCall() {
             setLoading(false); 
         }
     };
+
+    const handleHistory = (client) => {
+        setSelectedClient(client);
+        setShowHistory(true); // Show history modal
+        setModalType("history");
+    };
     
     const handleEdit = (client) => {
         setSelectedClient(client);
+        setModalType("edit");
     };
 
     const handleCloseForm = () => {
@@ -41,22 +65,23 @@ export function OnCall() {
         fetchData();
     };
 
-    const filteredData = tableData.filter(item => {
+    const filteredData = getLatestEntriesByNo(tableData).filter(item => {
         const matchesSearch =
             item.serial.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.namacabang.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.teknisi.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.namacustomer.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.status.toLowerCase().includes(searchQuery.toLowerCase());
-    
-        if (startDate && endDate) {
-            const itemDate = new Date(item.date);
-            const isWithinDateRange = itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
-            return isWithinDateRange && matchesSearch;
-        }
-    
-        return matchesSearch;
-    });    
+
+        const matchesStatus =
+            selectedStatus === "All" || item.status === selectedStatus;
+
+        const isWithinDateRange = startDate && endDate
+            ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
+            : true;
+
+        return matchesSearch && matchesStatus && isWithinDateRange;
+    });  
 
     const exportToExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(filteredData);
@@ -98,6 +123,20 @@ export function OnCall() {
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
                         />
+                        <select
+                            value={selectedStatus}
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                            className="p-2 border border-gray-300 rounded"
+                            >
+                            <option value="All">All Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Proceed">Proceed</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Canceled">Canceled</option>
+                            <option value="Completed">Completed</option>
+                            {/* Tambah sesuai dengan status yang kamu gunakan */}
+                            </select>
+
                         <button onClick={exportToExcel} className="px-14 bg-green-500 text-white rounded">Export</button>
                     </div>
                     
@@ -117,6 +156,7 @@ export function OnCall() {
                                 <th className="border border-gray-300 px-4 py-2">Status</th>
                                 <th className="border border-gray-300 px-4 py-2">Date</th> {/* Tambah kolom Date */}
                                 <th className="border border-gray-300 px-4 py-2">Edit</th> 
+                                <th className="border border-gray-300 px-4 py-2">History</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -148,6 +188,11 @@ export function OnCall() {
                                             <button onClick={() => handleEdit(item)} className="text-primary px-1 rounded">
                                                 <FaEdit />
                                             </button>
+                                        </td>
+                                        <td className="border border-gray-300 px-4 py-2">
+                                            <button onClick={() => handleHistory(item)} className="text-primary px-1 rounded">
+                                                <FaHistory />
+                                            </button>
                                         </td>                                    
                                     </tr>
                                 ))
@@ -172,7 +217,14 @@ export function OnCall() {
                     </div>
                 </>
             )}
-            {selectedClient && <UpdateOnCall client={selectedClient} onClose={handleCloseForm} />}
+            {modalType === "edit" && selectedClient && (
+                <UpdateOnCall client={selectedClient} onClose={handleCloseForm} />
+            )}
+            {modalType === "history" && selectedClient && (
+                <HistoryOnCall client={selectedClient} onClose={() => setModalType("")} />
+            )}
+
+            
         </div>
     );
 }

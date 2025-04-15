@@ -17,24 +17,19 @@ export const createClient = async (clientData) => {
         const {
             serial, model, namacabang, teknisi, problem,
             kategorikerusakan, date, namacustomer,
-            notelcustomer, status, active
+            notelcustomer, status, no
         } = clientData;
 
-        const { rows: lastRow } = await query('SELECT No FROM OnCall ORDER BY id DESC LIMIT 1');
-
-        let nextNo = 'OC0001'; 
-        if (lastRow.length > 0 && lastRow[0]?.no) {
-            const lastNo = lastRow[0].no;
-            const lastNumber = parseInt(lastNo.substring(2), 10) || 0;
-            nextNo = `OC${String(lastNumber + 1).padStart(4, '0')}`;
-        }
-
-        console.log("Nomor Tiket yang akan Disimpan:", nextNo);
-
+        // Tidak perlu generate nextNo di sini karena sudah dari frontend
         const { rows } = await query(
-            `INSERT INTO OnCall (serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, active) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`, 
-            [serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, nextNo, active]
+            `INSERT INTO OnCall (
+                serial, model, namacabang, teknisi, problem, 
+                kategorikerusakan, date, namacustomer, 
+                notelcustomer, status, no
+            ) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+            RETURNING *`, 
+            [serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no]
         );
 
         console.log("Data Berhasil Disimpan:", rows[0]);
@@ -44,6 +39,29 @@ export const createClient = async (clientData) => {
         throw err;
     }
 };
+
+export const createClientsStatus = async (clientData) => {
+    try {
+        const {
+            serial, model, namacabang, teknisi, problem,
+            kategorikerusakan, date, namacustomer,
+            notelcustomer, status, note, no, image
+        } = clientData;
+
+        const { rows } = await query(
+            `INSERT INTO OnCall (serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, image) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+             RETURNING *`, 
+            [serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, image]
+        );
+
+        return rows[0];
+    } catch (err) {
+        console.error("Gagal menyimpan data ke DB:", err);
+        throw err;
+    }
+};
+
 
 export const updateClient = async (id, clientData) => {
     const {
@@ -59,21 +77,15 @@ export const updateClient = async (id, clientData) => {
 
     const previousData = existingRows[0];
 
-    const completed = (status === "Completed") ? new Date().toISOString() : previousData.completed;
-    const active = (status === "Active") ? new Date().toISOString() : previousData.active;
-    const pending = (status === "Pending") ? new Date().toISOString() : previousData.pending;
-    const cancelled = (status === "Cancelled") ? new Date().toISOString() : previousData.cancelled;
-
-
     const { rows } = await query(
         `UPDATE OnCall 
          SET serial = $1, model = $2, namacabang = $3, teknisi = $4, problem = $5,
              kategorikerusakan = $6, date = $7, namacustomer = $8, notelcustomer = $9,
-             status = $10, note = $11, completed = $12, active = $13, pending = $14, cancelled = $15
-         WHERE id = $16
+             status = $10, note = $11
+         WHERE id = $12
          RETURNING *`,
         [serial, model, namacabang, teknisi, problem, kategorikerusakan,
-         date, namacustomer, notelcustomer, status, note, completed, active, pending, cancelled, id]
+         date, namacustomer, notelcustomer, status, note, id]
     );
 
     return rows[0];

@@ -52,7 +52,7 @@ export function UpdateOnCall({ client, onClose }) {
         };
 
         try {
-            await axios.put(`http://82.112.227.86:5173/api/clients/${client.id}`, updatedData, {
+            await axios.put(`http://localhost:3000/api/clients/${client.id}`, updatedData, {
                 headers: { "Content-Type": "application/json" }
             });
 
@@ -158,28 +158,11 @@ export function UpdateOnCall({ client, onClose }) {
                     </div>
 
                     <div>
-                        <select
+                    <input
                             name="status"
                             value={formData.status}
-                            onChange={handleChange}
                             className="input input-bordered w-full"
-                        >
-                            <option value="" disabled>Pilih Status</option>
-                            <option value="Active">Active</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <textarea
-                            name="note"
-                            value={formData.note}
-                            onChange={handleChange}
-                            className="textarea textarea-bordered w-full"
-                            placeholder="Catatan tambahan"
-                        />
+                        />    
                     </div>
 
                     <div className="col-span-2 flex justify-between mt-4">

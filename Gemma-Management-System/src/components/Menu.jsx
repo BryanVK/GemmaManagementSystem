@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { OnCall } from "./OnCall";
 import { CreateOnCall } from "./CreateOnCall";
+import { TaskList } from "./TaskList";
 
 export function Menu() {
     const [activeComponent, setActiveComponent] = useState("OnCall");
@@ -23,6 +24,7 @@ export function Menu() {
                 {/* Menampilkan komponen yang aktif */}
                 {activeComponent === "OnCall" && <OnCall />}
                 {activeComponent === "Report" && <OnCall/>}
+                {activeComponent === "TaskList" && <TaskList/>}
 
                 <label htmlFor="my-drawer-2" className="btn btn-primary drawer-button lg:hidden">
                     Open drawer
@@ -47,6 +49,14 @@ export function Menu() {
                             className={`w-full text-left px-4 py-2 rounded-lg transition ${activeComponent === "Report" ? "bg-primary text-white font-bold" : "hover:bg-gray-300"}`}
                         >
                             Report
+                        </button>
+                    </li>
+                    <li className="w-full">
+                        <button
+                            onClick={() => setActiveComponent("TaskList")}
+                            className={`w-full text-left px-4 py-2 rounded-lg transition ${activeComponent === "TaskList" ? "bg-primary text-white font-bold" : "hover:bg-gray-300"}`}
+                        >
+                            Task List
                         </button>
                     </li>
                 </ul>

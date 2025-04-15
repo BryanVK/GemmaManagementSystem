@@ -70,7 +70,7 @@ export function CreateOnCall() {
         if (!serial) return;
 
         try {
-            const response = await axios.get(`http://82.112.227.86:5173/api/machine?serialNo=${serial}`);
+            const response = await axios.get(`http://localhost:3000/api/machine?serialNo=${serial}`);
 
             if (response.data.length > 0) {
                 const machine = response.data[0];
@@ -93,7 +93,7 @@ export function CreateOnCall() {
 
     const fetchAvailableModels = async (keyword) => {
         try {
-            const response = await axios.get("http://82.112.227.86:5173/api/machine");
+            const response = await axios.get("http://localhost:3000/api/machine");
             const machines = response.data;
     
             const filteredModels = machines
@@ -110,7 +110,7 @@ export function CreateOnCall() {
     
     const fetchAvailableCabangs = async (keyword) => {
         try {
-            const response = await axios.get("http://82.112.227.86:5173/api/machine");
+            const response = await axios.get("http://localhost:3000/api/machine");
             const machines = response.data;
     
             const filteredCabangs = machines
@@ -127,42 +127,64 @@ export function CreateOnCall() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-    
+      
         setLoading(true);
-    
-        const dataToSubmit = {
-            ...formData,
-            active: formData.status === "Active" ? formatDateTime() : null
-        };        
-    
+      
         try {
-            await axios.post("http://82.112.227.86:5173/api/clients", dataToSubmit, {
-                headers: { "Content-Type": "application/json" }
-            });
-    
-            console.log("Data berhasil disimpan!");
-    
-            setFormData({
-                serial: "",
-                model: "",
-                namacabang: "",
-                teknisi: "",
-                problem: "",
-                kategorikerusakan: "",
-                date: formatDateTime(),
-                namacustomer: "",
-                notelcustomer: "",
-                status: "Active",
-                active: ""
-            });
-    
-            window.location.href = "/";
+          const response = await axios.get("http://localhost:3000/api/clients");
+          const clients = response.data;
+      
+          // Ambil semua nomor OC yang valid
+          const ocNumbers = clients
+            .map((client) => client.no)
+            .filter((no) => typeof no === "string" && /^OC\d{4}$/.test(no));
+      
+          // Ambil angka dari OC (contoh: OC0003 => 3)
+          const ocNumbersInt = ocNumbers.map((no) => parseInt(no.slice(2), 10));
+          console.log("OC Numbers:", ocNumbersInt);
+          // Cari angka terbesar dari OC
+          // Cari angka terbesar dari OC
+            const maxOC = ocNumbersInt.length > 0 ? Math.max(...ocNumbersInt) : 0;
+            console.log("OC terbesar:", maxOC); // 👉 Di sini tempatnya
+
+            // OC berikutnya
+            const nextOC = `OC${(maxOC + 1).toString().padStart(4, "0")}`;
+            console.log("Nomor OC baru:", nextOC); // 👉 Ini juga bisa buat verifikasi hasil akhir
+
+      
+          const dataToSubmit = {
+            ...formData,
+            no: nextOC,
+            active: formData.status === "Active" ? formatDateTime() : null,
+          };
+      
+          await axios.post("http://localhost:3000/api/clients", dataToSubmit, {
+            headers: { "Content-Type": "application/json" },
+          });
+      
+          console.log("Nomor OC baru:", nextOC);
+      
+          setFormData({
+            serial: "",
+            model: "",
+            namacabang: "",
+            teknisi: "",
+            problem: "",
+            kategorikerusakan: "",
+            date: formatDateTime(),
+            namacustomer: "",
+            notelcustomer: "",
+            status: "Active",
+            active: ""
+          });
+      
+          window.location.href = "/";
         } catch (error) {
-            console.error("Error:", error.response?.data || error.message);
+          console.error("Error:", error.response?.data || error.message);
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
-    };    
+      };                           
 
     const handleCancel = () => {
         window.location.href = "/";
@@ -170,7 +192,7 @@ export function CreateOnCall() {
 
     const fetchAvailableSerials = async ({ model, namacabang }) => {
         try {
-            const response = await axios.get("http://82.112.227.86:5173/api/machine");
+            const response = await axios.get("http://localhost:3000/api/machine");
             const allMachines = response.data;
     
             const filtered = allMachines.filter(machine => {
