@@ -8,5 +8,4 @@ router.post('/clients', clientController.createClients);
 router.post('/clients/status', upload.single('image'), clientController.createClientsStatus);
 router.put('/clients/:id', clientController.updateClients);
 router.get('/machine', clientController.getMachine);
-
  export default router;

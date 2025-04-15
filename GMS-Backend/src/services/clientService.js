@@ -1,4 +1,11 @@
 import { query } from "../db.js";
+import bcrypt from "bcrypt";
+
+export const findUserByEmail = async (email) => {
+    const { rows } = await query(`SELECT * FROM users WHERE email = $1`, [email]);
+    return rows[0]; // hanya ambil 1 user
+};
+
 
 export const getClients = async () => {
     const { rows } = await query('SELECT * FROM OnCall');

@@ -1,7 +1,11 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 export function UpdateOnCall({ client, onClose }) {
+    const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         serial: "",
         model: "",
@@ -48,6 +52,7 @@ export function UpdateOnCall({ client, onClose }) {
 
         const updatedData = {
             ...formData,
+            status: "Canceled", // Set status to 'Canceled' for update
             date: formatDateTime()
         };
 
@@ -57,18 +62,71 @@ export function UpdateOnCall({ client, onClose }) {
             });
 
             console.log("Data berhasil diupdate!");
-            onClose();
         } catch (error) {
             console.error("Error update:", error.response?.data || error.message);
         }
     };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        setLoading(true);
+    
+        try {
+            // 1. Update data lama jadi "Canceled"
+            const canceledData = {
+                ...client,
+                status: "Canceled",
+                date: formatDateTime()
+            };
+    
+            await axios.put(`http://localhost:3000/api/clients/${client.id}`, canceledData, {
+                headers: { "Content-Type": "application/json" }
+            });
+    
+            // 2. Ambil semua data buat generate nomor OC baru
+            const response = await axios.get("http://localhost:3000/api/clients");
+            const clients = response.data;
+    
+            const ocNumbers = clients
+                .map((c) => c.no)
+                .filter((no) => typeof no === "string" && /^OC\d{4}$/.test(no));
+    
+            const ocNumbersInt = ocNumbers.map((no) => parseInt(no.slice(2), 10));
+            const maxOC = ocNumbersInt.length > 0 ? Math.max(...ocNumbersInt) : 0;
+            const nextOC = `OC${(maxOC + 1).toString().padStart(4, "0")}`;
+    
+            // 3. Kirim data baru dengan teknisi baru dan status Active
+            const newData = {
+                ...client,
+                teknisi: formData.teknisi, // teknisi baru dari input
+                status: "Active",
+                no: nextOC,
+                active: formatDateTime(),
+                date: formatDateTime()
+            };
+    
+            delete newData.id; // pastikan tidak bawa ID lama
+    
+            await axios.post("http://localhost:3000/api/clients", newData, {
+                headers: { "Content-Type": "application/json" }
+            });
+    
+            console.log("Data baru berhasil dikirim:", newData);
+            onClose();
+        } catch (error) {
+            console.error("Gagal insert data baru:", error.response?.data || error.message);
+        } finally {
+            setLoading(false);
+        }
+    };    
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-opacity-90 backdrop-blur-md">
             <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-lg z-10">
                 <h2 className="text-lg font-semibold text-center">Update Data OnCall</h2>
 
-                <form onSubmit={handleUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div className="col-span-2">
                         <input
                             type="text"
@@ -170,7 +228,7 @@ export function UpdateOnCall({ client, onClose }) {
                             Batal
                         </button>
                         <button type="submit" className="btn btn-primary w-2/3">
-                            Update
+                            Submit & Update
                         </button>
                     </div>
                 </form>
