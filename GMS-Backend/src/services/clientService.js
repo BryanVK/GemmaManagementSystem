@@ -17,6 +17,11 @@ export const getMachine = async (serialNo) => {
     return rows;
 };
 
+export const getUsers = async () => {
+    const { rows } = await query('SELECT * FROM users WHERE "userType" = \'Teknisi\'');
+    return rows;
+};
+
 export const createClient = async (clientData) => {
     try {
         console.log("Data yang akan Disimpan ke DB:", clientData); // Debug

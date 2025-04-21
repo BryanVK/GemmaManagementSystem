@@ -1,6 +1,6 @@
 import logo from "../assets/gp1.jpg";
 
-export function Navbar() {
+export function Navbar({ onLogout }) {
   return (
     <div className="navbar bg-base-100 shadow-sm flex-wrap px-4">
       <div className="flex items-center gap-2 flex-1 overflow-hidden min-w-0">
@@ -12,14 +12,11 @@ export function Navbar() {
       <div className="flex-none">
         <ul className="menu menu-horizontal px-1">
           <li><a>Notification</a></li>
+          {/* Hapus bagian Profile dan langsung tambahkan tombol Logout */}
           <li>
-            <details>
-              <summary>Profile</summary>
-              <ul className="bg-base-100 rounded-t-none p-2">
-                <li><a>Account</a></li>
-                <li><a>Logout</a></li>
-              </ul>
-            </details>
+            <a href="#" onClick={(e) => { e.preventDefault(); onLogout(); }}>
+              Logout
+            </a>
           </li>
         </ul>
       </div>

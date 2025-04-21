@@ -20,6 +20,7 @@ export function Login({ onLoginSuccess }) {
   
       if (response.ok) {
         console.log("Login sukses:", data);
+        localStorage.setItem("user", JSON.stringify(data.user)); // Simpan data user ke localStorage
         onLoginSuccess(); // Jalankan kalau berhasil
       } else {
         alert(data.message || "Login gagal");
@@ -28,7 +29,7 @@ export function Login({ onLoginSuccess }) {
       console.error("Login error:", err);
       alert("Terjadi kesalahan saat login");
     }
-  };  
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

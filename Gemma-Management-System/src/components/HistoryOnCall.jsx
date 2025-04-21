@@ -3,6 +3,7 @@ import axios from "axios";
 
 export function HistoryOnCall({ client, onClose }) {
     const [historyList, setHistoryList] = useState([]);
+    const [previewImage, setPreviewImage] = useState(null);
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -10,9 +11,7 @@ export function HistoryOnCall({ client, onClose }) {
                 const response = await axios.get("http://localhost:3000/api/clients");
                 const allData = response.data;
 
-                // Filter berdasarkan 'no' yang sama
                 const filteredHistory = allData.filter(item => item.no === client.no);
-
                 setHistoryList(filteredHistory);
             } catch (error) {
                 console.error("Error fetching history:", error);
@@ -27,7 +26,9 @@ export function HistoryOnCall({ client, onClose }) {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-30 backdrop-blur-md z-50">
             <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl">
-                <h2 className="text-xl font-semibold text-center mb-6">History OnCall - No: {client.no}</h2>
+                <h2 className="text-xl font-semibold text-center mb-6">
+                    History OnCall - No: {client.no}
+                </h2>
 
                 <div className="overflow-x-auto">
                     <table className="table-auto w-full border border-gray-300">
@@ -53,20 +54,28 @@ export function HistoryOnCall({ client, onClose }) {
                                         <td className="px-4 py-2 border border-gray-300 text-center">
                                             {entry.date
                                                 ? new Date(entry.date).toLocaleString("id-ID", {
-                                                    year: "numeric",
-                                                    month: "2-digit",
-                                                    day: "2-digit",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                })
+                                                      year: "numeric",
+                                                      month: "2-digit",
+                                                      day: "2-digit",
+                                                      hour: "2-digit",
+                                                      minute: "2-digit",
+                                                  })
                                                 : "-"}
                                         </td>
                                         <td className="px-4 py-2 border border-gray-300 text-center">
                                             {entry.image ? (
                                                 <img
-                                                    src={`http://localhost:3000/uploads/${entry.image}`} // Gunakan path sesuai upload folder
+                                                    src={`http://localhost:3000/uploads/${entry.image}`}
                                                     alt="Bukti"
-                                                    className="w-20 h-20 object-cover mx-auto rounded"
+                                                    className="w-20 h-20 object-cover mx-auto rounded cursor-pointer hover:scale-105 transition-transform"
+                                                    onClick={() => setPreviewImage(entry.image)}
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter" || e.key === " ") {
+                                                            setPreviewImage(entry.image);
+                                                        }
+                                                    }}
                                                 />
                                             ) : (
                                                 "-"
@@ -98,6 +107,38 @@ export function HistoryOnCall({ client, onClose }) {
                     </button>
                 </div>
             </div>
+
+            {previewImage && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center"
+                    role="dialog"
+                    aria-modal="true"
+                    tabIndex={-1}
+                    onClick={() => setPreviewImage(null)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+                            setPreviewImage(null);
+                        }
+                    }}
+                >
+                    <div
+                        className="relative"
+                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+                    >
+                        <img
+                            src={`http://localhost:3000/uploads/${previewImage}`}
+                            alt="Preview"
+                            className="max-w-[90vw] max-h-[90vh] rounded-lg"
+                        />
+                        <button
+                            onClick={() => setPreviewImage(null)}
+                            className="absolute top-2 right-2 text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

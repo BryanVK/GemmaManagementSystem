@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import emailjs from "@emailjs/browser";
 
 export function CreateOnCall() {
     const formatDateTime = () => {
@@ -29,7 +30,23 @@ export function CreateOnCall() {
     const [availableSerials, setAvailableSerials] = useState([]);
     const [availableModels, setAvailableModels] = useState([]);
     const [availableCabangs, setAvailableCabangs] = useState([]);
-    
+    const [availableTeknisi, setAvailableTeknisi] = useState([]); // State for teknisi
+
+    useEffect(() => {
+        // Fetch teknisi data from backend (assuming API endpoint is available)
+        const fetchAvailableTeknisi = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/api/users"); // Adjust the endpoint as needed
+                setAvailableTeknisi(response.data); // Assuming response contains teknisi data
+                console.log(response.data); // Cek apakah data teknisi ada
+            } catch (err) {
+                console.error("Error fetching teknisi:", err);
+            }
+        };
+        
+        fetchAvailableTeknisi(); // Call on component mount
+    }, []);
+
     const validateForm = () => {
         let newErrors = {};
         Object.keys(formData).forEach((key) => {
@@ -63,33 +80,38 @@ export function CreateOnCall() {
         if (name === "status" && value === "Active") {
             setFormData((prev) => ({ ...prev, active: formatDateTime() }));
         }
-        
     };
 
     const fetchMachineData = async (serial) => {
         if (!serial) return;
-
+    
         try {
             const response = await axios.get(`http://localhost:3000/api/machine?serialNo=${serial}`);
-
+    
             if (response.data.length > 0) {
                 const machine = response.data[0];
-
+    
                 setFormData((prev) => ({
                     ...prev,
                     model: machine.MachineType || "",
-                    namacabang: machine.Customer || ""
+                    namacabang: machine.Customer || "",
+                    alamat: machine.CustomerAddress || ""  // Add the address field here
                 }));
-
+    
                 setErrorMsg("");
             } else {
-                setFormData((prev) => ({ ...prev, model: "", namacabang: "" }));
+                setFormData((prev) => ({
+                    ...prev,
+                    model: "",
+                    namacabang: "",
+                    alamat: "-"  // Set to "-" if no machine data found
+                }));
                 setErrorMsg("⚠ Serial tidak ditemukan. Anda dapat membuka input manual.");
             }
         } catch (error) {
             console.error("Error fetching machine data:", error);
         }
-    };
+    };    
 
     const fetchAvailableModels = async (keyword) => {
         try {
@@ -127,64 +149,80 @@ export function CreateOnCall() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-      
+    
         setLoading(true);
-      
+    
         try {
-          const response = await axios.get("http://localhost:3000/api/clients");
-          const clients = response.data;
-      
-          // Ambil semua nomor OC yang valid
-          const ocNumbers = clients
-            .map((client) => client.no)
-            .filter((no) => typeof no === "string" && /^OC\d{4}$/.test(no));
-      
-          // Ambil angka dari OC (contoh: OC0003 => 3)
-          const ocNumbersInt = ocNumbers.map((no) => parseInt(no.slice(2), 10));
-          console.log("OC Numbers:", ocNumbersInt);
-          // Cari angka terbesar dari OC
-          // Cari angka terbesar dari OC
+            // Ambil data client dan teknisi
+            const responseClients = await axios.get("http://localhost:3000/api/clients");
+            const clients = responseClients.data;
+    
+            const ocNumbers = clients
+                .map((client) => client.no)
+                .filter((no) => typeof no === "string" && /^OC\d{4}$/.test(no));
+            const ocNumbersInt = ocNumbers.map((no) => parseInt(no.slice(2), 10));
             const maxOC = ocNumbersInt.length > 0 ? Math.max(...ocNumbersInt) : 0;
-            console.log("OC terbesar:", maxOC); // 👉 Di sini tempatnya
-
-            // OC berikutnya
             const nextOC = `OC${(maxOC + 1).toString().padStart(4, "0")}`;
-            console.log("Nomor OC baru:", nextOC); // 👉 Ini juga bisa buat verifikasi hasil akhir
-
-      
-          const dataToSubmit = {
-            ...formData,
-            no: nextOC,
-            active: formData.status === "Active" ? formatDateTime() : null,
-          };
-      
-          await axios.post("http://localhost:3000/api/clients", dataToSubmit, {
-            headers: { "Content-Type": "application/json" },
-          });
-      
-          console.log("Nomor OC baru:", nextOC);
-      
-          setFormData({
-            serial: "",
-            model: "",
-            namacabang: "",
-            teknisi: "",
-            problem: "",
-            kategorikerusakan: "",
-            date: formatDateTime(),
-            namacustomer: "",
-            notelcustomer: "",
-            status: "Active",
-            active: ""
-          });
-      
-          window.location.href = "/";
+    
+            const dataToSubmit = {
+                ...formData,
+                no: nextOC,
+                active: formData.status === "Active" ? formatDateTime() : null,
+            };
+    
+            await axios.post("http://localhost:3000/api/clients", dataToSubmit, {
+                headers: { "Content-Type": "application/json" },
+            });
+    
+            // Ambil data teknisi dari API
+            const responseUsers = await axios.get("http://localhost:3000/api/users");
+            const teknisiEmail = responseUsers.data.find(user => user.name === formData.teknisi)?.email;
+            
+            if (!teknisiEmail) {
+                throw new Error("Email teknisi tidak ditemukan");
+            }
+    
+            // Kirim email menggunakan EmailJS
+            await emailjs.send('service_wbyy3q9', 'template_nxfux4g', {
+                nextOC: nextOC,
+                email: teknisiEmail, // Kirim email ke teknisi yang dipilih
+                model: formData.model,
+                name: formData.teknisi,
+                serial: formData.serial,
+                namacabang: formData.namacabang,
+                alamat: formData.alamat,  // Use formData.alamat here
+                namacustomer: formData.namacustomer,
+                notelcustomer: formData.notelcustomer,
+                problem: formData.problem,
+                kategorikerusakan: formData.kategorikerusakan
+            }, 'KzSlC3IojJpUAFOoY');            
+    
+            console.log("Email sent!");
+    
+            setFormData({
+                serial: "",
+                model: "",
+                namacabang: "",
+                teknisi: "",
+                problem: "",
+                kategorikerusakan: "",
+                date: formatDateTime(),
+                namacustomer: "",
+                notelcustomer: "",
+                status: "Active",
+                active: ""
+            });
+    
+            window.location.href = "/";
+    
         } catch (error) {
-          console.error("Error:", error.response?.data || error.message);
+            console.error("Error:", error.response?.data || error.message);
+            setErrorMsg("Gagal mengirim email atau menyimpan data. Silakan coba lagi.");
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };                           
+    };    
+    
 
     const handleCancel = () => {
         window.location.href = "/";
@@ -273,12 +311,28 @@ export function CreateOnCall() {
                     <div>
                         <input 
                             type="text" 
+                            name="alamat" 
+                            value={formData.alamat || ""}  // Set default value to empty string if not filled
+                            readOnly  // This can be read-only, or you can make it editable
+                            className="input input-bordered w-full" 
+                            placeholder="Alamat" 
+                        />
+                    </div>
+
+                    <div>
+                        <select 
                             name="teknisi" 
                             value={formData.teknisi} 
                             onChange={handleChange} 
-                            className="input input-bordered w-full" 
-                            placeholder="Teknisi" 
-                        />
+                            className="input input-bordered w-full"
+                        >
+                            <option value="">Pilih Teknisi</option>
+                            {availableTeknisi.map((teknisi, idx) => (
+                                <option key={idx} value={teknisi.name}>
+                                    {teknisi.name}
+                                </option>
+                            ))}
+                        </select>
                         {errors.teknisi && <p className="text-red-500 text-sm">{errors.teknisi}</p>}
                     </div>
 
@@ -360,8 +414,8 @@ export function CreateOnCall() {
                         <button type="button" onClick={handleCancel} className="btn btn-secondary w-1/3">
                             Batal
                         </button>
-                        <button type="submit" className="btn btn-primary w-2/3" disabled={loading}>
-                            {loading ? "Menyimpan..." : "Submit"}
+                        <button type="submit" disabled={loading} className="btn btn-primary w-1/3">
+                            {loading ? "Loading..." : "Simpan"}
                         </button>
                     </div>
                 </form>
@@ -369,4 +423,3 @@ export function CreateOnCall() {
         </div>
     );
 }
-

@@ -185,10 +185,16 @@ export function OnCall() {
                                         </td>
 
                                         <td className="border border-gray-300 px-4 py-2">
-                                            <button onClick={() => handleEdit(item)} className="text-primary px-1 rounded">
+                                            <button
+                                                onClick={() => item.status === "Active" && handleEdit(item)}
+                                                className={`px-1 rounded ${item.status === "Active" ? "text-blue-500 hover:text-blue-700" : "text-gray-400 cursor-not-allowed"}`}
+                                                disabled={item.status !== "Active"}
+                                                title={item.status !== "Active" ? "Edit hanya bisa dilakukan saat status Active" : "Edit"}
+                                            >
                                                 <FaEdit />
                                             </button>
                                         </td>
+
                                         <td className="border border-gray-300 px-4 py-2">
                                             <button onClick={() => handleHistory(item)} className="text-primary px-1 rounded">
                                                 <FaHistory />

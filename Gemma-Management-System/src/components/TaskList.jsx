@@ -12,11 +12,18 @@ export function TaskList() {
     const [searchQuery, setSearchQuery] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState("All"); // default All
+    const [selectedStatus, setSelectedStatus] = useState("Active"); // default All
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [loggedInName, setLoggedInName] = useState(""); // Menyimpan nama teknisi yang login
 
     useEffect(() => {
+        // Ambil nama teknisi yang login dari localStorage
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user) {
+            setLoggedInName(user.name); // Asumsi nama teknisi disimpan dalam "name"
+        }
+
         fetchData();
     }, []);
 
@@ -45,8 +52,8 @@ export function TaskList() {
         } finally {
             setLoading(false); 
         }
-    };    
-    
+    };
+
     const handleEdit = (client) => {
         setSelectedClient(client);
     };
@@ -56,6 +63,7 @@ export function TaskList() {
         fetchData();
     };
 
+    // Filter data berdasarkan nama teknisi yang login
     const filteredData = tableData.filter(item => {
         const matchesSearch =
             item.serial.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -71,8 +79,11 @@ export function TaskList() {
             ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
             : true;
 
-        return matchesSearch && matchesStatus && isWithinDateRange;
-    });    
+        // Filter berdasarkan nama teknisi yang login, case-sensitive
+        const matchesTechnician = item.teknisi === loggedInName;
+
+        return matchesSearch && matchesStatus && isWithinDateRange && matchesTechnician;
+    });
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -165,7 +176,11 @@ export function TaskList() {
                                             }) : "-"}
                                         </td>
                                         <td className="border border-gray-300 px-4 py-2">
-                                            <button onClick={() => handleEdit(item)} className="text-gray-600 hover:text-gray-800">
+                                            <button 
+                                                onClick={() => handleEdit(item)} 
+                                                className={`text-gray-600 hover:text-gray-800 ${item.status === "Canceled" ? "cursor-not-allowed text-gray-400" : ""}`} 
+                                                disabled={item.status === "Canceled"}
+                                            >
                                                 <FaEdit />
                                             </button>
                                         </td>                                    
@@ -173,18 +188,17 @@ export function TaskList() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="13" className="text-center py-4 text-gray-600">Tidak ada data.</td>
+                                    <td colSpan="12" className="text-center py-4">No data available</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
-
-                    <div className="flex justify-center mt-4 flex-wrap gap-2">
+                    <div className="flex justify-center mt-4">
                         {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
                             <button
                                 key={i}
                                 onClick={() => paginate(i + 1)}
-                                className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                                className={`mx-1 px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200"}`}
                             >
                                 {i + 1}
                             </button>
@@ -192,8 +206,12 @@ export function TaskList() {
                     </div>
                 </>
             )}
-
-            {selectedClient && <UpdateTeknisi client={selectedClient} onClose={handleCloseForm} />}
+            {selectedClient && (
+                <UpdateTeknisi
+                    client={selectedClient}
+                    onClose={handleCloseForm}
+                />
+            )}
         </div>
     );
 }

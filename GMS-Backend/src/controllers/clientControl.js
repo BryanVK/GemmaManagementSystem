@@ -30,6 +30,17 @@ export const getMachine = async (req, res) => {
     }
 };
 
+export const getUsers = async (req, res) => {
+    try{
+        const clients = await clientService.getUsers();
+        res.status(200).json(clients);
+    }
+    catch (err){
+        console.error('Error fetching clients:', err);
+        res.status(500).json({ message: 'internal server error'});
+    }
+};
+
 export const createClients = async (req, res) => {
     try{
         const clientData = req.body;
