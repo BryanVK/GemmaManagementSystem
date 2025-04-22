@@ -3,10 +3,10 @@ import logo from "../assets/gp1.jpg";
 export function Login({ onLoginSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const email = e.target.email.value;
     const password = e.target.password.value;
-  
+
     try {
       const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
@@ -15,13 +15,22 @@ export function Login({ onLoginSuccess }) {
         },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        console.log("Login sukses:", data);
-        localStorage.setItem("user", JSON.stringify(data.user)); // Simpan data user ke localStorage
-        onLoginSuccess(); // Jalankan kalau berhasil
+        const expiredAt = new Date();
+        expiredAt.setHours(expiredAt.getHours() + 1); // 2 jam stay login
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            ...data.user,
+            expiredAt: expiredAt.toISOString(),
+          })
+        );
+
+        onLoginSuccess();
       } else {
         alert(data.message || "Login gagal");
       }
@@ -48,6 +57,7 @@ export function Login({ onLoginSuccess }) {
               id="email"
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
               placeholder="Enter your email"
+              required
             />
           </div>
           <div>
@@ -59,6 +69,7 @@ export function Login({ onLoginSuccess }) {
               id="password"
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
               placeholder="Enter your password"
+              required
             />
           </div>
           <button
