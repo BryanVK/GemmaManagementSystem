@@ -67,19 +67,20 @@ export function OnCall() {
 
     const filteredData = getLatestEntriesByNo(tableData).filter(item => {
         const matchesSearch =
-            item.serial.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.namacabang.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.teknisi.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.namacustomer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.status.toLowerCase().includes(searchQuery.toLowerCase());
-
+            (item.serial || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.namacabang || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.teknisi || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.namacustomer || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.status || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.createby || "").toLowerCase().includes(searchQuery.toLowerCase());
+    
         const matchesStatus =
             selectedStatus === "All" || item.status === selectedStatus;
-
+    
         const isWithinDateRange = startDate && endDate
             ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
             : true;
-
+    
         return matchesSearch && matchesStatus && isWithinDateRange;
     });  
 
@@ -130,9 +131,9 @@ export function OnCall() {
                             >
                             <option value="All">All Status</option>
                             <option value="Active">Active</option>
-                            <option value="Proceed">Proceed</option>
+                            <option value="Confirm">Confirm</option>
+                            <option value="On Location">On Location</option>
                             <option value="Pending">Pending</option>
-                            <option value="Canceled">Canceled</option>
                             <option value="Completed">Completed</option>
                             {/* Tambah sesuai dengan status yang kamu gunakan */}
                             </select>
@@ -154,6 +155,7 @@ export function OnCall() {
                                 <th className="border border-gray-300 px-4 py-2">Nama Customer</th>
                                 <th className="border border-gray-300 px-4 py-2">No Tlp Customer</th>
                                 <th className="border border-gray-300 px-4 py-2">Status</th>
+                                <th className="border border-gray-300 px-4 py-2">Create By</th>
                                 <th className="border border-gray-300 px-4 py-2">Date</th> {/* Tambah kolom Date */}
                                 <th className="border border-gray-300 px-4 py-2">Edit</th> 
                                 <th className="border border-gray-300 px-4 py-2">History</th>
@@ -174,6 +176,7 @@ export function OnCall() {
                                         <td className="border border-gray-300 px-4 py-2">{item.namacustomer}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.notelcustomer}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.status}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.createby}</td>
                                         <td className="border border-gray-300 px-4 py-2">
                                             {item.date ? new Date(item.date).toLocaleString("id-ID", { 
                                                 year: "numeric", 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import emailjs from "@emailjs/browser";
 
 export function UpdateTeknisi({ client, onClose }) {
     const [formData, setFormData] = useState({
@@ -12,16 +13,21 @@ export function UpdateTeknisi({ client, onClose }) {
         namacustomer: "",
         notelcustomer: "",
         status: "",
-        note: ""
+        createby: "",
+        emailadmin: "",
+        lapker: "",
+        note: "",
+        no: ""
     });
-
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [image, setImage] = useState(null);
 
     useEffect(() => {
         if (client) {
             setFormData({
                 ...client,
-                note: client.note || ""
+                note: client.note || "",
+                lapker: client.lapker || ""
             });
         }
     }, [client]);
@@ -50,34 +56,65 @@ export function UpdateTeknisi({ client, onClose }) {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-
+    
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+    
         const updatedData = {
             ...formData,
-            date: formatDateTime()
+            date: formatDateTime(),
+            note: formData.note?.trim() || "",
+            lapker: formData.lapker?.trim() || "", // pastikan kosong kalau tidak diisi
         };
-
+        
         const formPayload = new FormData();
         Object.keys(updatedData).forEach(key => {
             formPayload.append(key, updatedData[key]);
         });
-
+        
+        // ❗ Tambahkan hanya jika user benar-benar memilih file baru
         if (image) {
             formPayload.append("image", image);
-        }
-
+        } else {
+            formPayload.append("image", ""); // atau abaikan ini jika server-mu otomatis handle
+        }        
+    
         try {
             await axios.post(`http://localhost:3000/api/clients/status`, formPayload, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
             });
-
+    
             console.log("Data berhasil diupdate!");
+    
+            // Kirim email jika status berubah menjadi Completed
+            if (client.status !== "Completed" && formData.status === "Completed") {
+                await emailjs.send('service_wbyy3q9', 'template_443kmer', {
+                    nextOC: formData.no,
+                    email: formData.emailadmin,
+                    model: formData.model,
+                    name: formData.createby,
+                    serial: formData.serial,
+                    namacabang: formData.namacabang,
+                    namacustomer: formData.namacustomer,
+                    notelcustomer: formData.notelcustomer,
+                    problem: formData.problem,
+                    kategorikerusakan: formData.kategorikerusakan,
+                    teknisi: formData.teknisi,
+                    note: formData.note,
+                }, 'KzSlC3IojJpUAFOoY');
+    
+                console.log("Email berhasil dikirim!");
+            }
+    
             onClose();
         } catch (error) {
             console.error("Error update:", error.response?.data || error.message);
+        } finally {
+            setIsSubmitting(false);
         }
-    };
+    };    
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-opacity-90 backdrop-blur-md z-50">
@@ -182,17 +219,26 @@ export function UpdateTeknisi({ client, onClose }) {
                         >
                             <option value="">Pilih Status</option>
                             <option value="Active">Active</option>
-                            <option value="Proceed">Proceed</option>
+                            <option value="Confirm">Confirm</option>
+                            <option value="On Location">On Location</option>
                             <option value="Pending">Pending</option>
-                            <option value="Canceled">Canceled</option>
                             <option value="Completed">Completed</option>
                         </select>
                     </div>
 
                     <div className="col-span-2">
+                        <input
+                            name="lapker"
+                            onChange={handleChange}
+                            className="input input-bordered w-full"
+                            placeholder="No Lapker"
+                            rows={3}
+                        />
+                    </div>
+
+                    <div className="col-span-2">
                         <textarea
                             name="note"
-                            value={formData.note}
                             onChange={handleChange}
                             className="textarea textarea-bordered w-full"
                             placeholder="Catatan Teknisi"
@@ -203,17 +249,23 @@ export function UpdateTeknisi({ client, onClose }) {
                     <div className="col-span-2">
                         <input
                             type="file"
-                            accept="image/*"
+                            accept="image/*,.pdf"
                             onChange={handleImageChange}
                             className="file-input file-input-bordered w-full"
                         />
+                    </div>
+
+                    <div className="col-span-2">
+                        <button type="submit" className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
+                            Tambah PM
+                        </button>
                     </div>
 
                     <div className="col-span-2 flex justify-between mt-4">
                         <button type="button" onClick={onClose} className="btn btn-secondary w-1/3">
                             Batal
                         </button>
-                        <button type="submit" className="btn btn-primary w-2/3">
+                        <button type="submit" className="btn btn-primary w-1/3">
                             Update
                         </button>
                     </div>

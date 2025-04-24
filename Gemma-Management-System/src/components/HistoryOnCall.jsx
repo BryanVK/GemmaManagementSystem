@@ -39,6 +39,7 @@ export function HistoryOnCall({ client, onClose }) {
                                 <th className="px-4 py-2 border border-gray-300">Date</th>
                                 <th className="px-4 py-2 border border-gray-300">Bukti</th>
                                 <th className="px-4 py-2 border border-gray-300">Note</th>
+                                <th className="px-4 py-2 border border-gray-300">No Lapker</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,7 +64,15 @@ export function HistoryOnCall({ client, onClose }) {
                                                 : "-"}
                                         </td>
                                         <td className="px-4 py-2 border border-gray-300 text-center">
-                                            {entry.image ? (
+                                        {entry.image ? (
+                                            entry.image.endsWith(".pdf") ? (
+                                                <button
+                                                    className="text-blue-600 underline"
+                                                    onClick={() => setPreviewImage(entry.image)}
+                                                >
+                                                    Lihat PDF
+                                                </button>
+                                            ) : (
                                                 <img
                                                     src={`http://localhost:3000/uploads/${entry.image}`}
                                                     alt="Bukti"
@@ -77,12 +86,17 @@ export function HistoryOnCall({ client, onClose }) {
                                                         }
                                                     }}
                                                 />
-                                            ) : (
-                                                "-"
-                                            )}
+                                            )
+                                        ) : (
+                                            "-"
+                                        )}
+
                                         </td>
                                         <td className="px-4 py-2 border border-gray-300 text-center">
                                             {entry.note || "-"}
+                                        </td>
+                                        <td className="px-4 py-2 border border-gray-300 text-center">
+                                            {entry.lapker || "-"}
                                         </td>
                                     </tr>
                                 ))
@@ -122,14 +136,22 @@ export function HistoryOnCall({ client, onClose }) {
                     }}
                 >
                     <div
-                        className="relative"
-                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+                        className="relative bg-white p-4 rounded-lg max-w-[90vw] max-h-[90vh] overflow-auto"
+                        onClick={(e) => e.stopPropagation()}
                     >
-                        <img
-                            src={`http://localhost:3000/uploads/${previewImage}`}
-                            alt="Preview"
-                            className="max-w-[90vw] max-h-[90vh] rounded-lg"
-                        />
+                        {previewImage.endsWith(".pdf") ? (
+                            <iframe
+                                src={`http://localhost:3000/uploads/${previewImage}`}
+                                title="Preview PDF"
+                                className="w-[80vw] h-[80vh]"
+                            />
+                        ) : (
+                            <img
+                                src={`http://localhost:3000/uploads/${previewImage}`}
+                                alt="Preview"
+                                className="max-w-[90vw] max-h-[90vh] rounded-lg"
+                            />
+                        )}
                         <button
                             onClick={() => setPreviewImage(null)}
                             className="absolute top-2 right-2 text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
@@ -139,6 +161,7 @@ export function HistoryOnCall({ client, onClose }) {
                     </div>
                 </div>
             )}
+
         </div>
     );
 }

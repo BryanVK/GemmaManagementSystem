@@ -9,7 +9,7 @@ export function CreateOnCall() {
 
         return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     };
-
+    const user = JSON.parse(localStorage.getItem("user"));
     const [formData, setFormData] = useState({
         serial: "",
         model: "",
@@ -21,6 +21,8 @@ export function CreateOnCall() {
         namacustomer: "",
         notelcustomer: "",
         status: "Active",
+        createby: user.name,
+        emailadmin: user.email,
         active: formatDateTime() // Langsung isi saat init
     });    
 
@@ -183,19 +185,19 @@ export function CreateOnCall() {
             }
     
             // Kirim email menggunakan EmailJS
-            await emailjs.send('service_wbyy3q9', 'template_nxfux4g', {
-                nextOC: nextOC,
-                email: teknisiEmail, // Kirim email ke teknisi yang dipilih
-                model: formData.model,
-                name: formData.teknisi,
-                serial: formData.serial,
-                namacabang: formData.namacabang,
-                alamat: formData.alamat,  // Use formData.alamat here
-                namacustomer: formData.namacustomer,
-                notelcustomer: formData.notelcustomer,
-                problem: formData.problem,
-                kategorikerusakan: formData.kategorikerusakan
-            }, 'KzSlC3IojJpUAFOoY');            
+            // await emailjs.send('service_wbyy3q9', 'template_nxfux4g', {
+            //     nextOC: nextOC,
+            //     email: teknisiEmail, // Kirim email ke teknisi yang dipilih
+            //     model: formData.model,
+            //     name: formData.teknisi,
+            //     serial: formData.serial,
+            //     namacabang: formData.namacabang,
+            //     alamat: formData.alamat,  // Use formData.alamat here
+            //     namacustomer: formData.namacustomer,
+            //     notelcustomer: formData.notelcustomer,
+            //     problem: formData.problem,
+            //     kategorikerusakan: formData.kategorikerusakan
+            // }, 'KzSlC3IojJpUAFOoY');            
     
             console.log("Email sent!");
     
@@ -210,6 +212,8 @@ export function CreateOnCall() {
                 namacustomer: "",
                 notelcustomer: "",
                 status: "Active",
+                createby: user.name,
+                emailadmin: user.email,
                 active: ""
             });
     

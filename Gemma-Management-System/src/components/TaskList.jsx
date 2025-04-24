@@ -12,7 +12,7 @@ export function TaskList() {
     const [searchQuery, setSearchQuery] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState("Active"); // default All
+    const [selectedStatus, setSelectedStatus] = useState("All"); // default All
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const [loggedInName, setLoggedInName] = useState(""); // Menyimpan nama teknisi yang login
@@ -73,8 +73,9 @@ export function TaskList() {
             item.status.toLowerCase().includes(searchQuery.toLowerCase());
 
         const matchesStatus =
-            selectedStatus === "All" || item.status === selectedStatus;
-
+            (selectedStatus === "All" && item.status !== "Completed") ||
+            item.status === selectedStatus;
+        
         const isWithinDateRange = startDate && endDate
             ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
             : true;
@@ -125,12 +126,12 @@ export function TaskList() {
                         >
                             <option value="All">All Status</option>
                             <option value="Active">Active</option>
-                            <option value="Proceed">Proceed</option>
+                            <option value="Confirm">Confirm</option>
+                            <option value="On Location">On Location</option>
                             <option value="Pending">Pending</option>
-                            <option value="Canceled">Canceled</option>
                             <option value="Completed">Completed</option>
-                            {/* Tambah opsi sesuai kebutuhan */}
-                        </select>
+                            {/* Tambah sesuai dengan status yang kamu gunakan */}
+                            </select>
                     </div>
                     
                     <table className="table mt-2 border-collapse border border-gray-300 w-full">
