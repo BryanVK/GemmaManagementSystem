@@ -2,6 +2,7 @@ import { useState } from "react";
 import { OnCall } from "./OnCall";
 import { CreateOnCall } from "./CreateOnCall";
 import { TaskList } from "./TaskList";
+import { AddMachine } from "./AddMachine";
 
 export function Menu() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,6 +35,7 @@ export function Menu() {
                     <>
                         {activeComponent === "OnCall" && <OnCall />}
                         {activeComponent === "Report" && <OnCall />}
+                        {activeComponent === "AddMachine" && <AddMachine />}
                     </>
                 )}
                 {userType === "Teknisi" && activeComponent === "TaskList" && <TaskList />}
@@ -73,6 +75,19 @@ export function Menu() {
                                     }`}
                                 >
                                     Report
+                                </button>
+                            </li>
+
+                            <li className="w-full">
+                                <button
+                                    onClick={() => setActiveComponent("AddMachine")}
+                                    className={`w-full text-left px-4 py-2 rounded-lg transition ${
+                                        activeComponent === "AddMachine"
+                                            ? "bg-primary text-white font-bold"
+                                            : "hover:bg-gray-300"
+                                    }`}
+                                >
+                                    Add Machine
                                 </button>
                             </li>
                         </>

@@ -53,6 +53,18 @@ export const createClients = async (req, res) => {
     }
 };
 
+export const createMachine = async (req, res) => {
+    try{
+        const clientData = req.body;
+        const newClient = await clientService.createMachine(clientData);
+        res.status(200).json(newClient);
+    }
+    catch (err){
+        console.error('Error fetching clients:', err);
+        res.status(500).json({ message: 'internal server error'});
+    }
+};
+
 export const createClientsStatus = async (req, res) => {
     try {
         const clientData = req.body;

@@ -52,6 +52,31 @@ export const createClient = async (clientData) => {
     }
 };
 
+export const createMachine = async (clientData) => {
+    try {
+        console.log("Data yang akan Disimpan ke DB:", clientData); // Debug
+
+        const {
+            model, serial, namacabang, alamat, date,  
+        } = clientData;
+
+        // Tidak perlu generate nextNo di sini karena sudah dari frontend
+        const { rows } = await query(
+            `INSERT INTO public."Machine"(
+            "MachineType", "SerialNo", "Customer", "CustomerAddress", "TanggalKeluar")
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING *`, 
+            [ model, serial ,namacabang, alamat, date]
+        );
+
+        console.log("Data Berhasil Disimpan:", rows[0]);
+        return rows[0];
+    } catch (err) {
+        console.error("Gagal menyimpan data ke DB:", err);
+        throw err;
+    }
+};
+
 export const createClientsStatus = async (clientData) => {
     try {
         const {
