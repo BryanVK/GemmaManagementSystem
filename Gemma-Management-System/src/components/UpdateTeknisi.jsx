@@ -17,7 +17,8 @@ export function UpdateTeknisi({ client, onClose }) {
         emailadmin: "",
         lapker: "",
         note: "",
-        no: ""
+        no: "",
+        type: ""
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [image, setImage] = useState(null);
@@ -79,6 +80,14 @@ export function UpdateTeknisi({ client, onClose }) {
             formPayload.append("image", ""); // atau abaikan ini jika server-mu otomatis handle
         }        
     
+        // Validasi jika status memerlukan bukti image
+        const statusRequiringImage = ["On Location", "Pending", "Completed"];
+        if (statusRequiringImage.includes(formData.status) && !image) {
+            alert("Silakan unggah bukti (image) untuk status tersebut.");
+            setIsSubmitting(false);
+            return;
+        }
+
         try {
             await axios.post(`http://localhost:3000/api/clients/status`, formPayload, {
                 headers: {
@@ -103,6 +112,7 @@ export function UpdateTeknisi({ client, onClose }) {
                     kategorikerusakan: formData.kategorikerusakan,
                     teknisi: formData.teknisi,
                     note: formData.note,
+                    type: formData.type,
                 }, 'KzSlC3IojJpUAFOoY');
     
                 console.log("Email berhasil dikirim!");
@@ -255,13 +265,7 @@ export function UpdateTeknisi({ client, onClose }) {
                         />
                     </div>
 
-                    <div className="col-span-2">
-                        <button type="submit" className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
-                            Tambah PM
-                        </button>
-                    </div>
-
-                    <div className="col-span-2 flex justify-between mt-4">
+                    <div className="col-span-2 flex justify-between">
                         <button type="button" onClick={onClose} className="btn btn-secondary w-1/3">
                             Batal
                         </button>

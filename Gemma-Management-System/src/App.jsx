@@ -1,8 +1,9 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import { Menu } from './components/Menu';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Login } from './components/Login';
+import { Menu } from './components/Menu';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,17 +18,14 @@ function App() {
 
       if (now < expiredTime) {
         setIsLoggedIn(true);
-
-        // Auto logout saat expired
         const timeout = expiredTime.getTime() - now.getTime();
         const timer = setTimeout(() => {
           handleLogout();
           alert("Sesi login berakhir, silakan login kembali.");
         }, timeout);
-
         return () => clearTimeout(timer);
       } else {
-        handleLogout(); // expired langsung logout
+        handleLogout();
       }
     }
   }, []);
@@ -35,30 +33,29 @@ function App() {
   const handleLogin = () => {
     setIsLoggedIn(true);
     localStorage.setItem("isLoggedIn", "true");
-
     const expiredAt = new Date();
-    expiredAt.setHours(expiredAt.getHours() + 2); // 2 jam ke depan
+    expiredAt.setMinutes(expiredAt.getMinutes() + 10);
     localStorage.setItem("expiredAt", expiredAt.toISOString());
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("expiredAt");
-    localStorage.removeItem("user"); // opsional kalau kamu simpan data user juga
+    localStorage.clear();
   };
 
   return (
-    <>
+    <Router>
       {isLoggedIn ? (
         <>
           <Navbar onLogout={handleLogout} />
-          <Menu />
+          <Routes>
+            <Route path="/*" element={<Menu />} />
+          </Routes>
         </>
       ) : (
         <Login onLoginSuccess={handleLogin} />
       )}
-    </>
+    </Router>
   );
 }
 

@@ -29,7 +29,7 @@ export const createClient = async (clientData) => {
         const {
             serial, model, namacabang, teknisi, problem,
             kategorikerusakan, date, namacustomer,
-            notelcustomer, status, createby, emailadmin, no
+            notelcustomer, status, createby, emailadmin, no, type
         } = clientData;
 
         // Tidak perlu generate nextNo di sini karena sudah dari frontend
@@ -37,11 +37,11 @@ export const createClient = async (clientData) => {
             `INSERT INTO OnCall (
                 serial, model, namacabang, teknisi, problem, 
                 kategorikerusakan, date, namacustomer, 
-                notelcustomer, status, createby, emailadmin, no
+                notelcustomer, status, createby, emailadmin, no, type
             ) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
             RETURNING *`, 
-            [serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, createby, emailadmin, no]
+            [serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, createby, emailadmin, no, type]
         );
 
         console.log("Data Berhasil Disimpan:", rows[0]);
@@ -57,14 +57,14 @@ export const createClientsStatus = async (clientData) => {
         const {
             serial, model, namacabang, teknisi, problem,
             kategorikerusakan, date, namacustomer,
-            notelcustomer, status, note, no, createby, emailadmin, lapker, image
+            notelcustomer, status, note, no, createby, emailadmin, lapker, type, image
         } = clientData;
 
         const { rows } = await query(
-            `INSERT INTO OnCall (serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, image) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+            `INSERT INTO OnCall (serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, image) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
              RETURNING *`, 
-            [serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, image]
+            [serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, image]
         );
 
         return rows[0];

@@ -146,6 +146,7 @@ export function OnCall() {
                             <tr className="bg-gray-200">
                                 <th className="border border-gray-300 px-4 py-2">No</th>
                                 <th className="border border-gray-300 px-4 py-2">ID</th>
+                                <th className="border border-gray-300 px-4 py-2">Type</th>
                                 <th className="border border-gray-300 px-4 py-2">Serial</th>
                                 <th className="border border-gray-300 px-4 py-2">Model</th>
                                 <th className="border border-gray-300 px-4 py-2">Nama Cabang</th>
@@ -167,6 +168,7 @@ export function OnCall() {
                                     <tr key={item.id} className="hover:bg-gray-100">
                                         <td className="border border-gray-300 px-4 py-2">{indexOfFirstItem + index + 1}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.no}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.type}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.serial}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.model}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.namacabang}</td>

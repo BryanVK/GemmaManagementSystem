@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import emailjs from "@emailjs/browser";
+// import emailjs from "@emailjs/browser";
 
-export function CreateOnCall() {
+export function CreatePM() {
     const formatDateTime = () => {
         const now = new Date();
         const pad = (num) => num.toString().padStart(2, "0");
@@ -14,16 +14,12 @@ export function CreateOnCall() {
         serial: "",
         model: "",
         namacabang: "",
-        teknisi: "",
-        problem: "",
-        kategorikerusakan: "",
+        teknisi: user.name,
         date: formatDateTime(),
-        namacustomer: "",
-        notelcustomer: "",
         status: "Active",
         createby: user.name,
         emailadmin: user.email,
-        type: "OnCall",
+        type: "PM",
         active: formatDateTime() // Langsung isi saat init
     });    
 
@@ -33,22 +29,7 @@ export function CreateOnCall() {
     const [availableSerials, setAvailableSerials] = useState([]);
     const [availableModels, setAvailableModels] = useState([]);
     const [availableCabangs, setAvailableCabangs] = useState([]);
-    const [availableTeknisi, setAvailableTeknisi] = useState([]); // State for teknisi
-
-    useEffect(() => {
-        // Fetch teknisi data from backend (assuming API endpoint is available)
-        const fetchAvailableTeknisi = async () => {
-            try {
-                const response = await axios.get("http://localhost:3000/api/users"); // Adjust the endpoint as needed
-                setAvailableTeknisi(response.data); // Assuming response contains teknisi data
-                console.log(response.data); // Cek apakah data teknisi ada
-            } catch (err) {
-                console.error("Error fetching teknisi:", err);
-            }
-        };
-        
-        fetchAvailableTeknisi(); // Call on component mount
-    }, []);
+    
 
     const validateForm = () => {
         let newErrors = {};
@@ -170,7 +151,8 @@ export function CreateOnCall() {
             const dataToSubmit = {
                 ...formData,
                 no: nextOC,
-                type: "OnCall",
+                type: "PM",
+                teknisi: user.name,
                 active: formData.status === "Active" ? formatDateTime() : null,
             };
     
@@ -207,16 +189,12 @@ export function CreateOnCall() {
                 serial: "",
                 model: "",
                 namacabang: "",
-                teknisi: "",
-                problem: "",
-                kategorikerusakan: "",
+                teknisi: user.name,
                 date: formatDateTime(),
-                namacustomer: "",
-                notelcustomer: "",
                 status: "Active",
                 createby: user.name,
                 emailadmin: user.email,
-                type: "OnCall",
+                type: "PM",
                 active: ""
             });
     
@@ -256,7 +234,7 @@ export function CreateOnCall() {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-opacity-30">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-                <h2 className="text-lg font-semibold text-center">Tambah Data OnCall</h2>
+                <h2 className="text-lg font-semibold text-center">Tambah Data PM</h2>
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div className="col-span-2">
@@ -327,72 +305,13 @@ export function CreateOnCall() {
                     </div>
 
                     <div>
-                        <select 
+                        <input 
                             name="teknisi" 
-                            value={formData.teknisi} 
-                            onChange={handleChange} 
+                            value={user.name} 
                             className="input input-bordered w-full"
                         >
-                            <option value="">Pilih Teknisi</option>
-                            {availableTeknisi.map((teknisi, idx) => (
-                                <option key={idx} value={teknisi.name}>
-                                    {teknisi.name}
-                                </option>
-                            ))}
-                        </select>
+                        </input>
                         {errors.teknisi && <p className="text-red-500 text-sm">{errors.teknisi}</p>}
-                    </div>
-
-                    <div>
-                        <input 
-                            type="text" 
-                            name="problem" 
-                            value={formData.problem} 
-                            onChange={handleChange} 
-                            className="input input-bordered w-full" 
-                            placeholder="Problem" 
-                        />
-                        {errors.problem && <p className="text-red-500 text-sm">{errors.problem}</p>}
-                    </div>
-
-                    <div>
-                        <select
-                            name="kategorikerusakan"
-                            value={formData.kategorikerusakan}
-                            onChange={handleChange}
-                            className="input input-bordered w-full"
-                        >
-                            <option value="">Pilih Kategori Kerusakan</option>
-                            <option value="Maintenance">Maintenance</option>
-                            <option value="Cleaning">Cleaning</option>
-                            <option value="Error">Error</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                        {errors.kategorikerusakan && <p className="text-red-500 text-sm">{errors.kategorikerusakan}</p>}
-                    </div>
-
-                    <div>
-                        <input 
-                            type="text" 
-                            name="namacustomer" 
-                            value={formData.namacustomer} 
-                            onChange={handleChange} 
-                            className="input input-bordered w-full" 
-                            placeholder="Nama Customer" 
-                        />
-                        {errors.namacustomer && <p className="text-red-500 text-sm">{errors.namacustomer}</p>}
-                    </div>
-
-                    <div>
-                        <input 
-                            type="text" 
-                            name="notelcustomer" 
-                            value={formData.notelcustomer} 
-                            onChange={handleChange} 
-                            className="input input-bordered w-full" 
-                            placeholder="No Tel Customer" 
-                        />
-                        {errors.notelcustomer && <p className="text-red-500 text-sm">{errors.notelcustomer}</p>}
                     </div>
 
                     <div>

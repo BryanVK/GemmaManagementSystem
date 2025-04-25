@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa"; 
 import { UpdateTeknisi } from "./UpdateTeknisi";
 import * as XLSX from "xlsx";
+import { CreatePM } from "./CreatePM"; // Hapus jika tidak digunakan
 
 export function TaskList() {
     const [tableData, setTableData] = useState([]);  
@@ -12,18 +13,15 @@ export function TaskList() {
     const [searchQuery, setSearchQuery] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState("All"); // default All
+    const [selectedStatus, setSelectedStatus] = useState("All");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    const [loggedInName, setLoggedInName] = useState(""); // Menyimpan nama teknisi yang login
+    const [loggedInName, setLoggedInName] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false); // NEW
 
     useEffect(() => {
-        // Ambil nama teknisi yang login dari localStorage
         const user = JSON.parse(localStorage.getItem("user"));
-        if (user) {
-            setLoggedInName(user.name); // Asumsi nama teknisi disimpan dalam "name"
-        }
-
+        if (user) setLoggedInName(user.name);
         fetchData();
     }, []);
 
@@ -31,26 +29,24 @@ export function TaskList() {
         try {
             const response = await axios.get("http://localhost:3000/api/clients");
             const allData = response.data;
-    
-            // Ambil entri terbaru per "no"
+
             const latestEntriesMap = new Map();
-    
             allData.forEach(item => {
                 const existing = latestEntriesMap.get(item.no);
                 if (!existing || new Date(item.date) > new Date(existing.date)) {
                     latestEntriesMap.set(item.no, item);
                 }
             });
-    
+
             const latestData = Array.from(latestEntriesMap.values()).sort(
                 (a, b) => new Date(b.date) - new Date(a.date)
             );
-    
+
             setTableData(latestData);
         } catch (err) {
             setError(err.message);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
@@ -63,7 +59,6 @@ export function TaskList() {
         fetchData();
     };
 
-    // Filter data berdasarkan nama teknisi yang login
     const filteredData = tableData.filter(item => {
         const matchesSearch =
             item.serial.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -80,7 +75,6 @@ export function TaskList() {
             ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
             : true;
 
-        // Filter berdasarkan nama teknisi yang login, case-sensitive
         const matchesTechnician = item.teknisi === loggedInName;
 
         return matchesSearch && matchesStatus && isWithinDateRange && matchesTechnician;
@@ -94,6 +88,28 @@ export function TaskList() {
 
     return (
         <div className="overflow-x-auto self-start w-full">
+            <button
+                className="btn btn-outline btn-primary mb-4"
+                onClick={() => setIsModalOpen(true)}
+            >
+                Create PM
+            </button>
+
+            {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-800/50 backdrop-blur-sm z-50">
+                    <div className="bg-white p-6 rounded-md shadow-md w-full max-w-lg">
+                        <CreatePM />
+                        <div className="flex justify-end mt-4">
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => setIsModalOpen(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {loading && <p>Loading data...</p>}
             {error && <p className="text-red-500">Error: {error}</p>}
 
@@ -139,6 +155,7 @@ export function TaskList() {
                             <tr className="bg-gray-300 text-sm text-gray-900">
                                 <th className="border border-gray-300 px-4 py-2">No</th>
                                 <th className="border border-gray-300 px-4 py-2">ID</th>
+                                <th className="border border-gray-300 px-4 py-2">Type</th>
                                 <th className="border border-gray-300 px-4 py-2">Serial</th>
                                 <th className="border border-gray-300 px-4 py-2">Model</th>
                                 <th className="border border-gray-300 px-4 py-2">Nama Cabang</th>
@@ -158,6 +175,7 @@ export function TaskList() {
                                     <tr key={item.id} className="hover:bg-gray-200 text-sm text-gray-700">
                                         <td className="border border-gray-300 px-4 py-2">{indexOfFirstItem + index + 1}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.no}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.type}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.serial}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.model}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.namacabang}</td>
