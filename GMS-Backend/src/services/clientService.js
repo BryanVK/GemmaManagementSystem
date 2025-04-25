@@ -99,6 +99,38 @@ export const createClientsStatus = async (clientData) => {
     }
 };
 
+export const createUsers = async (clientData) => {
+    try {
+        console.log("Data yang akan Disimpan ke DB:", clientData);
+
+        const { name, email, password, userType } = clientData;
+
+        // Ambil user_id terbesar saat ini dari tabel users
+        const { rows: maxRows } = await query(`
+            SELECT MAX(user_id::int) AS max_id FROM public.users
+        `);
+
+        const maxId = maxRows[0]?.max_id || 1000; // Jika belum ada, mulai dari 1001
+        const newUserId = maxId + 1; // Menambah 1 untuk user_id baru
+
+        // Simpan user baru dengan user_id tersebut
+        const { rows } = await query(
+            `INSERT INTO public.users(
+                user_id, name, email, password, "userType"
+            )
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING *`,
+            [newUserId, name, email, password, userType]
+        );
+
+        console.log("Data Berhasil Disimpan:", rows[0]);
+        return rows[0];
+    } catch (err) {
+        console.error("Gagal menyimpan data ke DB:", err);
+        throw err;
+    }
+};
+
 
 export const updateClient = async (id, clientData) => {
     const {

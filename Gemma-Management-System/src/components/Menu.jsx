@@ -3,6 +3,7 @@ import { OnCall } from "./OnCall";
 import { CreateOnCall } from "./CreateOnCall";
 import { TaskList } from "./TaskList";
 import { AddMachine } from "./AddMachine";
+import { AddTeknisi } from "./AddTeknisi";
 
 export function Menu() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,6 +37,7 @@ export function Menu() {
                         {activeComponent === "OnCall" && <OnCall />}
                         {activeComponent === "Report" && <OnCall />}
                         {activeComponent === "AddMachine" && <AddMachine />}
+                        {activeComponent === "AddTeknisi" && <AddTeknisi />}
                     </>
                 )}
                 {userType === "Teknisi" && activeComponent === "TaskList" && <TaskList />}
@@ -88,6 +90,19 @@ export function Menu() {
                                     }`}
                                 >
                                     Add Machine
+                                </button>
+                            </li>
+
+                            <li className="w-full">
+                                <button
+                                    onClick={() => setActiveComponent("AddTeknisi")}
+                                    className={`w-full text-left px-4 py-2 rounded-lg transition ${
+                                        activeComponent === "AddTeknisi"
+                                            ? "bg-primary text-white font-bold"
+                                            : "hover:bg-gray-300"
+                                    }`}
+                                >
+                                    Add Teknisi
                                 </button>
                             </li>
                         </>
