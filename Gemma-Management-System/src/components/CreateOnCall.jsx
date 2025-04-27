@@ -187,19 +187,19 @@ export function CreateOnCall() {
             }
     
             // Kirim email menggunakan EmailJS
-            // await emailjs.send('service_wbyy3q9', 'template_nxfux4g', {
-            //     nextOC: nextOC,
-            //     email: teknisiEmail, // Kirim email ke teknisi yang dipilih
-            //     model: formData.model,
-            //     name: formData.teknisi,
-            //     serial: formData.serial,
-            //     namacabang: formData.namacabang,
-            //     alamat: formData.alamat,  // Use formData.alamat here
-            //     namacustomer: formData.namacustomer,
-            //     notelcustomer: formData.notelcustomer,
-            //     problem: formData.problem,
-            //     kategorikerusakan: formData.kategorikerusakan
-            // }, 'KzSlC3IojJpUAFOoY');            
+            await emailjs.send('service_wbyy3q9', 'template_nxfux4g', {
+                nextOC: nextOC,
+                email: teknisiEmail, // Kirim email ke teknisi yang dipilih
+                model: formData.model,
+                name: formData.teknisi,
+                serial: formData.serial,
+                namacabang: formData.namacabang,
+                alamat: formData.alamat,  // Use formData.alamat here
+                namacustomer: formData.namacustomer,
+                notelcustomer: formData.notelcustomer,
+                problem: formData.problem,
+                kategorikerusakan: formData.kategorikerusakan
+            }, 'KzSlC3IojJpUAFOoY');            
     
             console.log("Email sent!");
     

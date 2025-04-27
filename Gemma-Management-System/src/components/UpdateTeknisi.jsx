@@ -98,7 +98,7 @@ export function UpdateTeknisi({ client, onClose }) {
             console.log("Data berhasil diupdate!");
     
             // Kirim email jika status berubah menjadi Completed
-            if (client.status !== "Completed" && formData.status === "Completed") {
+            if (client.status !== "Confirm" && formData.status === "Confirm") {
                 await emailjs.send('service_wbyy3q9', 'template_443kmer', {
                     nextOC: formData.no,
                     email: formData.emailadmin,
