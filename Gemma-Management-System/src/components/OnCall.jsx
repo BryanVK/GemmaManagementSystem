@@ -97,6 +97,17 @@ export function OnCall() {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+    function formatDateTime(dateString) {
+        if (!dateString) return "-";
+        
+        // Misal server kirim "2025-04-29T13:32" atau "2025-04-29 13:32"
+        const [datePart, timePart] = dateString.split("T").length > 1 ? dateString.split("T") : dateString.split(" ");
+        const [year, month, day] = datePart.split("-");
+        const [hour, minute] = timePart.split(":");
+        
+        return `${day}/${month}/${year} ${hour}:${minute}`;
+    }
+    
     return (
         <div className="overflow-x-auto self-start w-full">
             {loading && <p>Loading data...</p>}
@@ -180,13 +191,7 @@ export function OnCall() {
                                         <td className="border border-gray-300 px-4 py-2">{item.status}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.createby}</td>
                                         <td className="border border-gray-300 px-4 py-2">
-                                            {item.date ? new Date(item.date).toLocaleString("id-ID", { 
-                                                year: "numeric", 
-                                                month: "2-digit", 
-                                                day: "2-digit", 
-                                                hour: "2-digit", 
-                                                minute: "2-digit"
-                                            }) : "-"}
+                                            {item.date ? formatDateTime(item.date) : "-"}
                                         </td>
 
                                         <td className="border border-gray-300 px-4 py-2">
