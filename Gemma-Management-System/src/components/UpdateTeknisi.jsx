@@ -274,6 +274,12 @@ export function UpdateTeknisi({ client, onClose }) {
                         </button>
                     </div>
                 </form>
+                {isSubmitting && (
+                    <div className="absolute inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-50">
+                        <span className="loading loading-spinner text-primary w-12 h-12 mb-2"></span>
+                        <p className="text-gray-700 font-medium">Mengupdate data...</p>
+                    </div>
+                )}
             </div>
         </div>
     );
