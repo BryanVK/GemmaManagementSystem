@@ -64,7 +64,7 @@ export function HistoryOnCall({ client, onClose }) {
                                             {entry.status || "-"}
                                         </td>
                                         <td className="px-4 py-2 border border-gray-300 text-center">
-                                        {item.date ? formatDateTime(item.date) : "-"}
+                                        {entry.date ? formatDateTime(entry.date) : "-"}
                                         </td>
                                         <td className="px-4 py-2 border border-gray-300 text-center">
                                         {entry.image ? (
