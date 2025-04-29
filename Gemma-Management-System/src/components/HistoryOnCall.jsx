@@ -23,6 +23,17 @@ export function HistoryOnCall({ client, onClose }) {
         }
     }, [client]);
 
+    function formatDateTime(dateString) {
+        if (!dateString) return "-";
+        
+        // Misal server kirim "2025-04-29T13:32" atau "2025-04-29 13:32"
+        const [datePart, timePart] = dateString.split("T").length > 1 ? dateString.split("T") : dateString.split(" ");
+        const [year, month, day] = datePart.split("-");
+        const [hour, minute] = timePart.split(":");
+        
+        return `${day}/${month}/${year} ${hour}:${minute}`;
+    }
+    
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-30 backdrop-blur-md z-50">
             <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl">
@@ -53,15 +64,7 @@ export function HistoryOnCall({ client, onClose }) {
                                             {entry.status || "-"}
                                         </td>
                                         <td className="px-4 py-2 border border-gray-300 text-center">
-                                            {entry.date
-                                                ? new Date(entry.date).toLocaleString("id-ID", {
-                                                      year: "numeric",
-                                                      month: "2-digit",
-                                                      day: "2-digit",
-                                                      hour: "2-digit",
-                                                      minute: "2-digit",
-                                                  })
-                                                : "-"}
+                                        {item.date ? formatDateTime(item.date) : "-"}
                                         </td>
                                         <td className="px-4 py-2 border border-gray-300 text-center">
                                         {entry.image ? (
