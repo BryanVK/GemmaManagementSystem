@@ -69,7 +69,7 @@ export function CreatePM() {
         if (!serial) return;
     
         try {
-            const response = await axios.get(`http://localhost:3000/api/machine?serialNo=${serial}`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine?serialNo=${serial}`);
     
             if (response.data.length > 0) {
                 const machine = response.data[0];
@@ -98,7 +98,7 @@ export function CreatePM() {
 
     const fetchAvailableModels = async (keyword) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const machines = response.data;
     
             const filteredModels = machines
@@ -115,7 +115,7 @@ export function CreatePM() {
     
     const fetchAvailableCabangs = async (keyword) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const machines = response.data;
     
             const filteredCabangs = machines
@@ -137,7 +137,7 @@ export function CreatePM() {
     
         try {
             // Ambil data client dan teknisi
-            const responseClients = await axios.get("http://localhost:3000/api/clients");
+            const responseClients = await axios.get(`${import.meta.env.VITE_API_URL}/api/clients`);
             const clients = responseClients.data;
     
             const ocNumbers = clients
@@ -155,12 +155,12 @@ export function CreatePM() {
                 active: formData.status === "Active" ? formatDateTime() : null,
             };
     
-            await axios.post("http://localhost:3000/api/clients", dataToSubmit, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/clients`, dataToSubmit, {
                 headers: { "Content-Type": "application/json" },
             });
     
             // Ambil data teknisi dari API
-            const responseUsers = await axios.get("http://localhost:3000/api/users");
+            const responseUsers = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`);
             const teknisiEmail = responseUsers.data.find(user => user.name === formData.teknisi)?.email;
             
             if (!teknisiEmail) {
@@ -199,7 +199,7 @@ export function CreatePM() {
 
     const fetchAvailableSerials = async ({ model, namacabang }) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const allMachines = response.data;
     
             const filtered = allMachines.filter(machine => {

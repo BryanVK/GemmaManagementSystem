@@ -48,7 +48,7 @@ export function AddTeknisi() {
                 ...formData,
             };
 
-            await axios.post("http://localhost:3000/api/users", dataToSubmit, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/users`, dataToSubmit, {
                 headers: { "Content-Type": "application/json" },
             });
 

@@ -27,7 +27,7 @@ export function TaskList() {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/api/clients");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/clients`);
             const allData = response.data;
 
             const latestEntriesMap = new Map();

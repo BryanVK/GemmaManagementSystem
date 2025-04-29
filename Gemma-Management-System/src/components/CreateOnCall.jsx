@@ -39,7 +39,7 @@ export function CreateOnCall() {
         // Fetch teknisi data from backend (assuming API endpoint is available)
         const fetchAvailableTeknisi = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/users"); // Adjust the endpoint as needed
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`); // Adjust the endpoint as needed
                 setAvailableTeknisi(response.data); // Assuming response contains teknisi data
                 console.log(response.data); // Cek apakah data teknisi ada
             } catch (err) {
@@ -89,7 +89,7 @@ export function CreateOnCall() {
         if (!serial) return;
     
         try {
-            const response = await axios.get(`http://localhost:3000/api/machine?serialNo=${serial}`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine?serialNo=${serial}`);
     
             if (response.data.length > 0) {
                 const machine = response.data[0];
@@ -118,7 +118,7 @@ export function CreateOnCall() {
 
     const fetchAvailableModels = async (keyword) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const machines = response.data;
     
             const filteredModels = machines
@@ -135,7 +135,7 @@ export function CreateOnCall() {
     
     const fetchAvailableCabangs = async (keyword) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const machines = response.data;
     
             const filteredCabangs = machines
@@ -157,7 +157,7 @@ export function CreateOnCall() {
     
         try {
             // Ambil data client dan teknisi
-            const responseClients = await axios.get("http://localhost:3000/api/clients");
+            const responseClients = await axios.get(`${import.meta.env.VITE_API_URL}/api/clients`);
             const clients = responseClients.data;
     
             const ocNumbers = clients
@@ -174,12 +174,12 @@ export function CreateOnCall() {
                 active: formData.status === "Active" ? formatDateTime() : null,
             };
     
-            await axios.post("http://localhost:3000/api/clients", dataToSubmit, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/clients`, dataToSubmit, {
                 headers: { "Content-Type": "application/json" },
             });
     
             // Ambil data teknisi dari API
-            const responseUsers = await axios.get("http://localhost:3000/api/users");
+            const responseUsers = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`);
             const teknisiEmail = responseUsers.data.find(user => user.name === formData.teknisi)?.email;
             
             if (!teknisiEmail) {
@@ -237,7 +237,7 @@ export function CreateOnCall() {
 
     const fetchAvailableSerials = async ({ model, namacabang }) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const allMachines = response.data;
     
             const filtered = allMachines.filter(machine => {

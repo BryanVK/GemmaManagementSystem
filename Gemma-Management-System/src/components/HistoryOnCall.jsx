@@ -8,7 +8,7 @@ export function HistoryOnCall({ client, onClose }) {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/clients");
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/clients`);
                 const allData = response.data;
 
                 const filteredHistory = allData.filter(item => item.no === client.no);
@@ -74,7 +74,7 @@ export function HistoryOnCall({ client, onClose }) {
                                                 </button>
                                             ) : (
                                                 <img
-                                                    src={`http://localhost:3000/uploads/${entry.image}`}
+                                                    src={`${import.meta.env.VITE_API_URL}/uploads/${entry.image}`}
                                                     alt="Bukti"
                                                     className="w-20 h-20 object-cover mx-auto rounded cursor-pointer hover:scale-105 transition-transform"
                                                     onClick={() => setPreviewImage(entry.image)}
@@ -141,13 +141,13 @@ export function HistoryOnCall({ client, onClose }) {
                     >
                         {previewImage.endsWith(".pdf") ? (
                             <iframe
-                                src={`http://localhost:3000/uploads/${previewImage}`}
+                                src={`${import.meta.env.VITE_API_URL}/uploads/${previewImage}`}
                                 title="Preview PDF"
                                 className="w-[80vw] h-[80vh]"
                             />
                         ) : (
                             <img
-                                src={`http://localhost:3000/uploads/${previewImage}`}
+                                src={`${import.meta.env.VITE_API_URL}/uploads/${previewImage}`}
                                 alt="Preview"
                                 className="max-w-[90vw] max-h-[90vh] rounded-lg"
                             />

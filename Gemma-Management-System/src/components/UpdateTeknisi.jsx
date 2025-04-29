@@ -89,7 +89,7 @@ export function UpdateTeknisi({ client, onClose }) {
         }
 
         try {
-            await axios.post(`http://localhost:3000/api/clients/status`, formPayload, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/clients/status`, formPayload, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }

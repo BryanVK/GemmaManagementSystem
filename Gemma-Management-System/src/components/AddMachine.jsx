@@ -64,7 +64,7 @@ export function AddMachine() {
         if (!serial) return;
     
         try {
-            const response = await axios.get(`http://localhost:3000/api/machine?serialNo=${serial}`);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine?serialNo=${serial}`);
             if (response.data.length > 0) {
                 const machine = response.data[0];
                 setFormData((prev) => ({
@@ -95,7 +95,7 @@ export function AddMachine() {
                 };
     
                 try {
-                    await axios.post("http://localhost:3000/api/machine", dataToInsert, {
+                    await axios.post(`${import.meta.env.VITE_API_URL}/api/machine`, dataToInsert, {
                         headers: { "Content-Type": "application/json" },
                     });
                     setErrorMsg("Data mesin baru berhasil ditambahkan.");
@@ -111,7 +111,7 @@ export function AddMachine() {
 
     const fetchAvailableModels = async (keyword) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const filteredModels = response.data
                 .filter(m => m.MachineType?.toLowerCase().includes(keyword.toLowerCase()))
                 .map(m => m.MachineType);
@@ -123,7 +123,7 @@ export function AddMachine() {
 
     const fetchAvailableCabangs = async (keyword) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const filteredCabangs = response.data
                 .filter(m => m.Customer?.toLowerCase().includes(keyword.toLowerCase()))
                 .map(m => m.Customer);
@@ -135,7 +135,7 @@ export function AddMachine() {
 
     const fetchAvailableSerials = async ({ model, namacabang }) => {
         try {
-            const response = await axios.get("http://localhost:3000/api/machine");
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const filtered = response.data.filter(machine => {
                 const matchModel = model ? machine.MachineType?.toLowerCase().includes(model.toLowerCase()) : true;
                 const matchCabang = namacabang ? machine.Customer?.toLowerCase().includes(namacabang.toLowerCase()) : true;
@@ -158,7 +158,7 @@ export function AddMachine() {
                 ...formData,
             };
 
-            await axios.post("http://localhost:3000/api/machine", dataToSubmit, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/machine`, dataToSubmit, {
                 headers: { "Content-Type": "application/json" },
             });
 

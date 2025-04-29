@@ -34,7 +34,7 @@ export function UpdateOnCall({ client, onClose }) {
         // Fetch data teknisi
         const fetchAvailableTeknisi = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/users"); // Ganti sesuai kebutuhan
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`); // Ganti sesuai kebutuhan
                 setAvailableTeknisi(response.data); // Set data teknisi
                 console.log(response.data); // Debug
             } catch (err) {
@@ -74,7 +74,7 @@ export function UpdateOnCall({ client, onClose }) {
         };
 
         try {
-            await axios.put(`http://localhost:3000/api/clients/${client.id}`, updatedData, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/clients/${client.id}`, updatedData, {
                 headers: { "Content-Type": "application/json" }
             });
 
@@ -96,12 +96,12 @@ export function UpdateOnCall({ client, onClose }) {
                 date: formatDateTime()
             };
     
-            await axios.put(`http://localhost:3000/api/clients/${client.id}`, canceledData, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/clients/${client.id}`, canceledData, {
                 headers: { "Content-Type": "application/json" }
             });
     
             // 2. Ambil semua data untuk generate nomor OC baru
-            const responseClients = await axios.get("http://localhost:3000/api/clients");
+            const responseClients = await axios.get(`${import.meta.env.VITE_API_URL}/api/clients`);
             const clients = responseClients.data;
     
             const ocNumbers = clients
@@ -123,12 +123,12 @@ export function UpdateOnCall({ client, onClose }) {
     
             delete newData.id;
     
-            await axios.post("http://localhost:3000/api/clients", newData, {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/clients`, newData, {
                 headers: { "Content-Type": "application/json" }
             });
     
             // 4. Ambil email teknisi
-            const responseUsers = await axios.get("http://localhost:3000/api/users");
+            const responseUsers = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`);
             const teknisiEmail = responseUsers.data.find(user => user.name === formData.teknisi)?.email;
     
             if (!teknisiEmail) {
