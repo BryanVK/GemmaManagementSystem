@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEdit, FaHistory } from "react-icons/fa"; 
+import { FaEdit, FaHistory, FaCopy } from "react-icons/fa"; // Import FaCopy untuk ikon
 import { UpdateOnCall } from "./UpdateOnCall";
 import { HistoryOnCall } from "./HistoryOnCall";
 import * as XLSX from "xlsx";
@@ -14,7 +14,7 @@ export function OnCall() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("All");
-    const [showHistory, setShowHistory] = useState(false); 
+    const [showHistory, setShowHistory] = useState(false);
     const [modalType, setModalType] = useState(""); 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -35,7 +35,7 @@ export function OnCall() {
     
         return Array.from(latestMap.values());
     };
-    
+
     const fetchData = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/clients`);
@@ -62,6 +62,28 @@ export function OnCall() {
     const handleCloseForm = () => {
         setSelectedClient(null);
         fetchData();
+    };
+
+    const handleCopy = (client) => {
+        // Menyalin seluruh data baris ke clipboard dalam format teks
+        const textToCopy = `
+            No: ${client.no}
+            Serial: ${client.serial}
+            Model: ${client.model}
+            Nama Cabang: ${client.namacabang}
+            Teknisi: ${client.teknisi}
+            Problem: ${client.problem}
+            Nama Customer: ${client.namacustomer}
+            No Tlp Customer: ${client.notelcustomer}
+            Status: ${client.status}
+            Date: ${client.date ? formatDateTime(client.date) : "-"}
+        `;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert("Data berhasil disalin ke clipboard!");
+        }).catch((err) => {
+            console.error("Gagal menyalin:", err);
+        });
     };
 
     const filteredData = getLatestEntriesByNo(tableData).filter(item => {
@@ -105,17 +127,7 @@ export function OnCall() {
         
         return `${day}/${month}/${year} ${hour}:${minute}`;
     }
-
-    // Function to copy data to clipboard
-    const handleCopy = (item) => {
-        const textToCopy = `No: ${item.no}\nID: ${item.id}\nSerial: ${item.serial}\nModel: ${item.model}\nNama Cabang: ${item.namacabang}\nTeknisi: ${item.teknisi}\nProblem: ${item.problem}\nNama Customer: ${item.namacustomer}\nNo Tlp Customer: ${item.notelcustomer}\nStatus: ${item.status}\nCreate By: ${item.createby}\nDate: ${formatDateTime(item.date)}`;
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert("Data copied to clipboard!");
-        }).catch((err) => {
-            alert("Failed to copy data: " + err);
-        });
-    };
-
+    
     return (
         <div className="overflow-x-auto self-start w-full">
             {loading && <p>Loading data...</p>}
@@ -175,15 +187,16 @@ export function OnCall() {
                                 <th className="border border-gray-300 px-4 py-2">No Tlp Customer</th>
                                 <th className="border border-gray-300 px-4 py-2">Status</th>
                                 <th className="border border-gray-300 px-4 py-2">Create By</th>
-                                <th className="border border-gray-300 px-4 py-2">Date</th>
+                                <th className="border border-gray-300 px-4 py-2">Date</th> 
                                 <th className="border border-gray-300 px-4 py-2">Edit</th> 
                                 <th className="border border-gray-300 px-4 py-2">History</th>
+                                <th className="border border-gray-300 px-4 py-2">Copy</th> {/* Kolom untuk copy */}
                             </tr>
                         </thead>
                         <tbody>
                             {currentItems.length > 0 ? (
                                 currentItems.map((item, index) => (
-                                    <tr key={item.id} className="hover:bg-gray-100" onClick={() => handleCopy(item)}>
+                                    <tr key={item.id} className="hover:bg-gray-100">
                                         <td className="border border-gray-300 px-4 py-2">{indexOfFirstItem + index + 1}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.no}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.type}</td>
@@ -192,59 +205,31 @@ export function OnCall() {
                                         <td className="border border-gray-300 px-4 py-2">{item.namacabang}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.teknisi}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.problem}</td>
-                                        <td className="border border-gray-300 px-4 py-2">{item.kategorikerusakan}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.kategori}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.namacustomer}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.notelcustomer}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.status}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.createby}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.date ? formatDateTime(item.date) : "-"}</td>
                                         <td className="border border-gray-300 px-4 py-2">
-                                            {item.date ? formatDateTime(item.date) : "-"}
+                                            <button onClick={() => handleEdit(item)} className="text-blue-500"><FaEdit /></button>
                                         </td>
-
                                         <td className="border border-gray-300 px-4 py-2">
-                                            <button
-                                                onClick={() => item.status === "Active" && handleEdit(item)}
-                                                className={`px-1 rounded ${item.status === "Active" ? "text-blue-500 hover:text-blue-700" : "text-gray-400 cursor-not-allowed"}`}
-                                                disabled={item.status !== "Active"}
-                                                title={item.status !== "Active" ? "Edit hanya bisa dilakukan saat status Active" : "Edit"}
-                                            >
-                                                <FaEdit />
-                                            </button>
+                                            <button onClick={() => handleHistory(item)} className="text-blue-500"><FaHistory /></button>
                                         </td>
-
                                         <td className="border border-gray-300 px-4 py-2">
-                                            <button onClick={() => handleHistory(item)} className="text-primary px-1 rounded">
-                                                <FaHistory />
-                                            </button>
-                                        </td>                                    
+                                            <button onClick={() => handleCopy(item)} className="text-blue-500"><FaCopy /></button>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="8" className="text-center py-4">Tidak ada data.</td>
+                                    <td colSpan="14" className="text-center py-4">No data available</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
-
-                    <div className="flex justify-center mt-4">
-                        {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => paginate(i + 1)}
-                                className={`mx-1 px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
-                    </div>
                 </>
-            )}
-            {modalType === "edit" && selectedClient && (
-                <UpdateOnCall client={selectedClient} onClose={handleCloseForm} />
-            )}
-            {modalType === "history" && selectedClient && (
-                <HistoryOnCall client={selectedClient} onClose={() => setModalType("")} />
             )}
         </div>
     );
