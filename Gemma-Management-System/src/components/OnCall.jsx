@@ -108,6 +108,33 @@ export function OnCall() {
         return `${day}/${month}/${year} ${hour}:${minute}`;
     }
     
+    const handleCopyReport = (item, index) => {
+        const report = 
+    `Laporan Oncall
+    No: ${index + 1}
+    ID: ${item.id}
+    Type: ${item.type}
+    Serial: ${item.serial}
+    Model: ${item.model}
+    Nama Cabang: ${item.namacabang}
+    Teknisi: ${item.teknisi}
+    Problem: ${item.problem}
+    Kategori Kerusakan: ${item.kategori_kerusakan}
+    Nama Customer: ${item.nama_customer}
+    No Tlp Customer: ${item.no_tlp_customer}
+    Status: ${item.status}
+    Create By: ${item.create_by}
+    Date: ${item.date}`;
+    
+        navigator.clipboard.writeText(report)
+            .then(() => {
+                alert("Laporan berhasil disalin ke clipboard.");
+            })
+            .catch(err => {
+                console.error("Gagal menyalin: ", err);
+            });
+    };    
+    
     return (
         <div className="overflow-x-auto self-start w-full">
             {loading && <p>Loading data...</p>}
@@ -171,6 +198,7 @@ export function OnCall() {
                                 <th className="border border-gray-300 px-4 py-2">Date</th> {/* Tambah kolom Date */}
                                 <th className="border border-gray-300 px-4 py-2">Edit</th> 
                                 <th className="border border-gray-300 px-4 py-2">History</th>
+                                <th className="border border-gray-300 px-4 py-2">Copy</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -209,7 +237,12 @@ export function OnCall() {
                                             <button onClick={() => handleHistory(item)} className="text-primary px-1 rounded">
                                                 <FaHistory />
                                             </button>
-                                        </td>                                    
+                                        </td> 
+                                        <td className="border border-gray-300 px-4 py-2">
+                                            <button onClick={() => handleCopyReport(item, index)} className="text-primary px-1 rounded">
+                                                <FaCopy />
+                                            </button>
+                                        </td>                 
                                     </tr>
                                 ))
                             ) : (
