@@ -2,18 +2,17 @@ import { useState } from "react";
 import axios from "axios";
 
 export function AddTeknisi() {
-
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
-        userType: "", // userType is now initialized as an empty string
+        userType: "",
     });
 
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [errors, setErrors] = useState({});
-    const [emailExists, setEmailExists] = useState(false); // State to track if email exists
+    const [emailExists, setEmailExists] = useState(false);
 
     const validateForm = () => {
         let newErrors = {};
@@ -22,18 +21,8 @@ export function AddTeknisi() {
                 newErrors[key] = "Field ini wajib diisi";
             }
         });
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-        setErrors((prev) => ({ ...prev, [name]: "" }));
-        if (name === "email") {
-            checkEmailExists(value); // Check if email exists when the email is being typed
-        }
     };
 
     const checkEmailExists = async (email) => {
@@ -41,7 +30,6 @@ export function AddTeknisi() {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/usersEmail`, {
                 params: { email },
             });
-    
             return false; // Email belum ada
         } catch (error) {
             if (error.response && error.response.status === 404) {
@@ -50,35 +38,44 @@ export function AddTeknisi() {
             console.error("Email check failed:", error);
             return false;
         }
-    };    
+    };
+
+    const handleChange = async (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+
+        if (name === "email") {
+            const exists = await checkEmailExists(value);
+            setEmailExists(exists);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-    
+
         setLoading(true);
-    
         try {
-            const emailExists = await checkEmailExists(formData.email);
-            if (emailExists) {
+            const isEmailExist = await checkEmailExists(formData.email);
+            if (isEmailExist) {
                 setErrors((prev) => ({ ...prev, email: "Email sudah terdaftar" }));
+                setEmailExists(true);
                 setLoading(false);
                 return;
             }
-    
-            const dataToSubmit = { ...formData };
-    
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/users`, dataToSubmit, {
+
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/users`, formData, {
                 headers: { "Content-Type": "application/json" },
             });
-    
+
             setFormData({
                 name: "",
                 email: "",
                 password: "",
                 userType: "",
             });
-    
+            setEmailExists(false);
             window.location.href = "/";
         } catch (error) {
             console.error("Error:", error.response?.data || error.message);
@@ -86,7 +83,7 @@ export function AddTeknisi() {
         } finally {
             setLoading(false);
         }
-    };    
+    };
 
     const handleCancel = () => {
         window.location.href = "/";
@@ -116,20 +113,20 @@ export function AddTeknisi() {
                         <input
                             type="text"
                             name="email"
-                            value={formData.email || ""}
+                            value={formData.email}
                             onChange={handleChange}
                             className="input input-bordered w-full"
                             placeholder="Email"
                         />
                         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-                        {emailExists && <p className="text-red-500 text-sm">Email sudah terdaftar</p>} {/* Email exists error */}
+                        {emailExists && <p className="text-red-500 text-sm">Email sudah terdaftar</p>}
                     </div>
 
                     <div>
                         <input
                             type="text"
                             name="password"
-                            value={formData.password || ""}
+                            value={formData.password}
                             onChange={handleChange}
                             className="input input-bordered w-full"
                             placeholder="Password"
@@ -140,7 +137,7 @@ export function AddTeknisi() {
                     <div>
                         <select
                             name="userType"
-                            value={formData.userType || ""}
+                            value={formData.userType}
                             onChange={handleChange}
                             className="input input-bordered w-full"
                         >
