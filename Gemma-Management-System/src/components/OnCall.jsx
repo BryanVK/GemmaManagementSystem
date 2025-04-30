@@ -110,16 +110,16 @@ export function OnCall() {
     
     const handleCopyReport = (item, index) => {
         const report = 
-`**ONCALL**
-Serial: **${item.serial}**
-Model: **${item.model}**
-Nama Cabang: **${item.namacabang}**
-Teknisi: **${item.teknisi}**
-Problem: **${item.problem}**
-Kategori Kerusakan: **${item.kategori_kerusakan}**
-Nama Customer: **${item.nama_customer}**
-No Tlp Customer: **${item.no_tlp_customer}**
-Date: **${item.date}**`;
+`*ONCALL*
+Serial: *${item.serial}*
+Model: *${item.model}*
+Nama Cabang: *${item.namacabang}*
+Teknisi: *${item.teknisi}*
+Problem: *${item.problem}*
+Kategori Kerusakan: *${item.kategorikerusakan}*
+Nama Customer: *${item.namacustomer}*
+No Tlp Customer: *${item.notelcustomer}*
+Date: *${item.date}*`;
     
         if (navigator.clipboard) {
             // Clipboard API supported
