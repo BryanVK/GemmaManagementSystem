@@ -119,7 +119,7 @@ Problem: *${item.problem}*
 Kategori Kerusakan: *${item.kategorikerusakan}*
 Nama Customer: *${item.namacustomer}*
 No Tlp Customer: *${item.notelcustomer}*
-Date: *${item.date}*`;
+Date: *${formatDateTime(item.date)}*`;
     
         if (navigator.clipboard) {
             // Clipboard API supported
