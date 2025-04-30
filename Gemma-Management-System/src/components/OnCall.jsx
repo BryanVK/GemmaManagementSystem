@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
 import axios from "axios";
-import { FaEdit, FaHistory, FaCopy } from "react-icons/fa"; // Import FaCopy untuk ikon
+import { useEffect, useState } from "react";
+import { FaEdit, FaHistory } from "react-icons/fa"; 
 import { UpdateOnCall } from "./UpdateOnCall";
 import { HistoryOnCall } from "./HistoryOnCall";
 import * as XLSX from "xlsx";
+import { DateTime } from 'luxon';
 
 export function OnCall() {
     const [tableData, setTableData] = useState([]);  
@@ -14,8 +16,8 @@ export function OnCall() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("All");
-    const [showHistory, setShowHistory] = useState(false);
-    const [modalType, setModalType] = useState(""); 
+    const [showHistory, setShowHistory] = useState(false); // State to control history modal visibility
+    const [modalType, setModalType] = useState(""); // "edit" atau "history"
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -35,7 +37,7 @@ export function OnCall() {
     
         return Array.from(latestMap.values());
     };
-
+    
     const fetchData = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/clients`);
@@ -50,7 +52,7 @@ export function OnCall() {
 
     const handleHistory = (client) => {
         setSelectedClient(client);
-        setShowHistory(true); 
+        setShowHistory(true); // Show history modal
         setModalType("history");
     };
     
@@ -62,28 +64,6 @@ export function OnCall() {
     const handleCloseForm = () => {
         setSelectedClient(null);
         fetchData();
-    };
-
-    const handleCopy = (client) => {
-        // Menyalin seluruh data baris ke clipboard dalam format teks
-        const textToCopy = `
-            No: ${client.no}
-            Serial: ${client.serial}
-            Model: ${client.model}
-            Nama Cabang: ${client.namacabang}
-            Teknisi: ${client.teknisi}
-            Problem: ${client.problem}
-            Nama Customer: ${client.namacustomer}
-            No Tlp Customer: ${client.notelcustomer}
-            Status: ${client.status}
-            Date: ${client.date ? formatDateTime(client.date) : "-"}
-        `;
-
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert("Data berhasil disalin ke clipboard!");
-        }).catch((err) => {
-            console.error("Gagal menyalin:", err);
-        });
     };
 
     const filteredData = getLatestEntriesByNo(tableData).filter(item => {
@@ -98,9 +78,10 @@ export function OnCall() {
         const matchesStatus =
             selectedStatus === "All" || item.status === selectedStatus;
     
-        const isWithinDateRange = startDate && endDate
-            ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
-            : true;
+            const isWithinDateRange = startDate && endDate
+            ? DateTime.fromISO(item.date, { zone: 'utc' }).setZone('Asia/Jakarta') >= DateTime.fromISO(startDate, { zone: 'Asia/Jakarta' }) &&
+              DateTime.fromISO(item.date, { zone: 'utc' }).setZone('Asia/Jakarta') <= DateTime.fromISO(endDate, { zone: 'Asia/Jakarta' })
+            : true;        
     
         return matchesSearch && matchesStatus && isWithinDateRange;
     });  
@@ -121,12 +102,12 @@ export function OnCall() {
     function formatDateTime(dateString) {
         if (!dateString) return "-";
         
-        const [datePart, timePart] = dateString.split("T").length > 1 ? dateString.split("T") : dateString.split(" ");
-        const [year, month, day] = datePart.split("-");
-        const [hour, minute] = timePart.split(":");
+        // Parsing tanggal dari database yang menggunakan UTC
+        const date = DateTime.fromSQL(dateString, { zone: 'utc' }).setZone('Asia/Jakarta');
         
-        return `${day}/${month}/${year} ${hour}:${minute}`;
-    }
+        // Format untuk menampilkan tanggal dan waktu yang sesuai dengan zona waktu Jakarta
+        return date.toFormat('yyyy-MM-dd HH:mm:ss');
+    }                   
     
     return (
         <div className="overflow-x-auto self-start w-full">
@@ -166,6 +147,7 @@ export function OnCall() {
                             <option value="On Location">On Location</option>
                             <option value="Pending">Pending</option>
                             <option value="Completed">Completed</option>
+                            {/* Tambah sesuai dengan status yang kamu gunakan */}
                             </select>
 
                         <button onClick={exportToExcel} className="px-14 bg-green-500 text-white rounded">Export</button>
@@ -187,10 +169,9 @@ export function OnCall() {
                                 <th className="border border-gray-300 px-4 py-2">No Tlp Customer</th>
                                 <th className="border border-gray-300 px-4 py-2">Status</th>
                                 <th className="border border-gray-300 px-4 py-2">Create By</th>
-                                <th className="border border-gray-300 px-4 py-2">Date</th> 
+                                <th className="border border-gray-300 px-4 py-2">Date</th> {/* Tambah kolom Date */}
                                 <th className="border border-gray-300 px-4 py-2">Edit</th> 
                                 <th className="border border-gray-300 px-4 py-2">History</th>
-                                <th className="border border-gray-300 px-4 py-2">Copy</th> {/* Kolom untuk copy */}
                             </tr>
                         </thead>
                         <tbody>
@@ -205,32 +186,62 @@ export function OnCall() {
                                         <td className="border border-gray-300 px-4 py-2">{item.namacabang}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.teknisi}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.problem}</td>
-                                        <td className="border border-gray-300 px-4 py-2">{item.kategori}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.kategorikerusakan}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.namacustomer}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.notelcustomer}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.status}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.createby}</td>
-                                        <td className="border border-gray-300 px-4 py-2">{item.date ? formatDateTime(item.date) : "-"}</td>
                                         <td className="border border-gray-300 px-4 py-2">
-                                            <button onClick={() => handleEdit(item)} className="text-blue-500"><FaEdit /></button>
+                                            {item.date ? formatDateTime(item.date) : "-"}
                                         </td>
+
                                         <td className="border border-gray-300 px-4 py-2">
-                                            <button onClick={() => handleHistory(item)} className="text-blue-500"><FaHistory /></button>
+                                            <button
+                                                onClick={() => item.status === "Active" && handleEdit(item)}
+                                                className={`px-1 rounded ${item.status === "Active" ? "text-blue-500 hover:text-blue-700" : "text-gray-400 cursor-not-allowed"}`}
+                                                disabled={item.status !== "Active"}
+                                                title={item.status !== "Active" ? "Edit hanya bisa dilakukan saat status Active" : "Edit"}
+                                            >
+                                                <FaEdit />
+                                            </button>
                                         </td>
+
                                         <td className="border border-gray-300 px-4 py-2">
-                                            <button onClick={() => handleCopy(item)} className="text-blue-500"><FaCopy /></button>
-                                        </td>
+                                            <button onClick={() => handleHistory(item)} className="text-primary px-1 rounded">
+                                                <FaHistory />
+                                            </button>
+                                        </td>                                    
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="14" className="text-center py-4">No data available</td>
+                                    <td colSpan="8" className="text-center py-4">Tidak ada data.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
+
+                    <div className="flex justify-center mt-4">
+                        {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => paginate(i + 1)}
+                                className={`mx-1 px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                    </div>
                 </>
             )}
+            {modalType === "edit" && selectedClient && (
+                <UpdateOnCall client={selectedClient} onClose={handleCloseForm} />
+            )}
+            {modalType === "history" && selectedClient && (
+                <HistoryOnCall client={selectedClient} onClose={() => setModalType("")} />
+            )}
+
+            
         </div>
     );
 }
