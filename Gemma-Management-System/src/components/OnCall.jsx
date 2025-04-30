@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { FaEdit, FaHistory } from "react-icons/fa"; 
 import { UpdateOnCall } from "./UpdateOnCall";
 import { HistoryOnCall } from "./HistoryOnCall";
@@ -15,8 +14,8 @@ export function OnCall() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("All");
-    const [showHistory, setShowHistory] = useState(false); // State to control history modal visibility
-    const [modalType, setModalType] = useState(""); // "edit" atau "history"
+    const [showHistory, setShowHistory] = useState(false); 
+    const [modalType, setModalType] = useState(""); 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -51,7 +50,7 @@ export function OnCall() {
 
     const handleHistory = (client) => {
         setSelectedClient(client);
-        setShowHistory(true); // Show history modal
+        setShowHistory(true); 
         setModalType("history");
     };
     
@@ -100,14 +99,23 @@ export function OnCall() {
     function formatDateTime(dateString) {
         if (!dateString) return "-";
         
-        // Misal server kirim "2025-04-29T13:32" atau "2025-04-29 13:32"
         const [datePart, timePart] = dateString.split("T").length > 1 ? dateString.split("T") : dateString.split(" ");
         const [year, month, day] = datePart.split("-");
         const [hour, minute] = timePart.split(":");
         
         return `${day}/${month}/${year} ${hour}:${minute}`;
     }
-    
+
+    // Function to copy data to clipboard
+    const handleCopy = (item) => {
+        const textToCopy = `No: ${item.no}\nID: ${item.id}\nSerial: ${item.serial}\nModel: ${item.model}\nNama Cabang: ${item.namacabang}\nTeknisi: ${item.teknisi}\nProblem: ${item.problem}\nNama Customer: ${item.namacustomer}\nNo Tlp Customer: ${item.notelcustomer}\nStatus: ${item.status}\nCreate By: ${item.createby}\nDate: ${formatDateTime(item.date)}`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert("Data copied to clipboard!");
+        }).catch((err) => {
+            alert("Failed to copy data: " + err);
+        });
+    };
+
     return (
         <div className="overflow-x-auto self-start w-full">
             {loading && <p>Loading data...</p>}
@@ -146,7 +154,6 @@ export function OnCall() {
                             <option value="On Location">On Location</option>
                             <option value="Pending">Pending</option>
                             <option value="Completed">Completed</option>
-                            {/* Tambah sesuai dengan status yang kamu gunakan */}
                             </select>
 
                         <button onClick={exportToExcel} className="px-14 bg-green-500 text-white rounded">Export</button>
@@ -168,7 +175,7 @@ export function OnCall() {
                                 <th className="border border-gray-300 px-4 py-2">No Tlp Customer</th>
                                 <th className="border border-gray-300 px-4 py-2">Status</th>
                                 <th className="border border-gray-300 px-4 py-2">Create By</th>
-                                <th className="border border-gray-300 px-4 py-2">Date</th> {/* Tambah kolom Date */}
+                                <th className="border border-gray-300 px-4 py-2">Date</th>
                                 <th className="border border-gray-300 px-4 py-2">Edit</th> 
                                 <th className="border border-gray-300 px-4 py-2">History</th>
                             </tr>
@@ -176,7 +183,7 @@ export function OnCall() {
                         <tbody>
                             {currentItems.length > 0 ? (
                                 currentItems.map((item, index) => (
-                                    <tr key={item.id} className="hover:bg-gray-100">
+                                    <tr key={item.id} className="hover:bg-gray-100" onClick={() => handleCopy(item)}>
                                         <td className="border border-gray-300 px-4 py-2">{indexOfFirstItem + index + 1}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.no}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.type}</td>
@@ -239,8 +246,6 @@ export function OnCall() {
             {modalType === "history" && selectedClient && (
                 <HistoryOnCall client={selectedClient} onClose={() => setModalType("")} />
             )}
-
-            
         </div>
     );
 }
