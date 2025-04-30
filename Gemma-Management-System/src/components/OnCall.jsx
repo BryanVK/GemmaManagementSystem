@@ -68,14 +68,22 @@ export function OnCall() {
     const handleCopy = (item) => {
         // Salin data yang diinginkan, misalnya No dan Serial
         const textToCopy = `No: ${item.no}, Serial: ${item.serial}, Model: ${item.model}, Status: ${item.status}`;
-        
-        // Menyalin ke clipboard
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert("Data telah disalin!");
-        }).catch((err) => {
-            console.error("Gagal menyalin:", err);
-        });
-    };
+    
+        // Memastikan Clipboard API tersedia
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert("Data telah disalin!");
+                })
+                .catch((err) => {
+                    console.error("Gagal menyalin:", err);
+                    alert("Terjadi kesalahan saat menyalin data.");
+                });
+        } else {
+            console.error("Clipboard API tidak tersedia di browser ini.");
+            alert("Fitur salin tidak didukung oleh browser Anda.");
+        }
+    };    
 
     const filteredData = getLatestEntriesByNo(tableData).filter(item => {
         const matchesSearch =
