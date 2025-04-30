@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaEdit, FaHistory, FaClipboard } from "react-icons/fa"; 
+import { FaEdit, FaHistory } from "react-icons/fa"; 
 import { UpdateOnCall } from "./UpdateOnCall";
 import { HistoryOnCall } from "./HistoryOnCall";
 import * as XLSX from "xlsx";
@@ -64,26 +64,6 @@ export function OnCall() {
         setSelectedClient(null);
         fetchData();
     };
-
-    const handleCopy = (item) => {
-        // Salin data yang diinginkan, misalnya No dan Serial
-        const textToCopy = `No: ${item.no}, Serial: ${item.serial}, Model: ${item.model}, Status: ${item.status}`;
-    
-        // Memastikan Clipboard API tersedia
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => {
-                    alert("Data telah disalin!");
-                })
-                .catch((err) => {
-                    console.error("Gagal menyalin:", err);
-                    alert("Terjadi kesalahan saat menyalin data.");
-                });
-        } else {
-            console.error("Clipboard API tidak tersedia di browser ini.");
-            alert("Fitur salin tidak didukung oleh browser Anda.");
-        }
-    };    
 
     const filteredData = getLatestEntriesByNo(tableData).filter(item => {
         const matchesSearch =
@@ -166,6 +146,7 @@ export function OnCall() {
                             <option value="On Location">On Location</option>
                             <option value="Pending">Pending</option>
                             <option value="Completed">Completed</option>
+                            {/* Tambah sesuai dengan status yang kamu gunakan */}
                         </select>
 
                         <button onClick={exportToExcel} className="px-14 bg-green-500 text-white rounded">Export</button>
@@ -187,16 +168,15 @@ export function OnCall() {
                                 <th className="border border-gray-300 px-4 py-2">No Tlp Customer</th>
                                 <th className="border border-gray-300 px-4 py-2">Status</th>
                                 <th className="border border-gray-300 px-4 py-2">Create By</th>
-                                <th className="border border-gray-300 px-4 py-2">Date</th>
+                                <th className="border border-gray-300 px-4 py-2">Date</th> {/* Tambah kolom Date */}
                                 <th className="border border-gray-300 px-4 py-2">Edit</th> 
                                 <th className="border border-gray-300 px-4 py-2">History</th>
-                                <th className="border border-gray-300 px-4 py-2">Copy</th> {/* Add Copy button column */}
                             </tr>
                         </thead>
                         <tbody>
                             {currentItems.length > 0 ? (
                                 currentItems.map((item, index) => (
-                                    <tr key={item.id} className="hover:bg-gray-100" onClick={() => handleCopy(item)}>
+                                    <tr key={item.id} className="hover:bg-gray-100">
                                         <td className="border border-gray-300 px-4 py-2">{indexOfFirstItem + index + 1}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.no}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.type}</td>
@@ -228,12 +208,6 @@ export function OnCall() {
                                         <td className="border border-gray-300 px-4 py-2">
                                             <button onClick={() => handleHistory(item)} className="text-primary px-1 rounded">
                                                 <FaHistory />
-                                            </button>
-                                        </td>
-
-                                        <td className="border border-gray-300 px-4 py-2">
-                                            <button onClick={() => handleCopy(item)} className="text-green-500 px-1 rounded">
-                                                <FaClipboard />
                                             </button>
                                         </td>                                    
                                     </tr>
