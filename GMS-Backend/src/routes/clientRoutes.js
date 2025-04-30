@@ -10,5 +10,6 @@ router.put('/clients/:id', clientController.updateClients);
 router.get('/machine', clientController.getMachine);
 router.post('/machine', clientController.createMachine);
 router.get('/users', clientController.getUsers);
+router.get('/usersEmail', clientController.getUsersEmail);
 router.post('/users', clientController.createUsers);
  export default router;

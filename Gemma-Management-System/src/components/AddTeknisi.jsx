@@ -2,11 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 
 export function AddTeknisi() {
-    const formatDateTime = () => {
-        const now = new Date();
-        const pad = (num) => num.toString().padStart(2, "0");
-        return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-    };
 
     const [formData, setFormData] = useState({
         name: "",
@@ -18,6 +13,7 @@ export function AddTeknisi() {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [errors, setErrors] = useState({});
+    const [emailExists, setEmailExists] = useState(false); // State to track if email exists
 
     const validateForm = () => {
         let newErrors = {};
@@ -35,30 +31,54 @@ export function AddTeknisi() {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: "" }));
+        if (name === "email") {
+            checkEmailExists(value); // Check if email exists when the email is being typed
+        }
     };
+
+    const checkEmailExists = async (email) => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/usersEmail`, {
+                params: { email },
+            });
+    
+            return false; // Email belum ada
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                return true; // Email sudah terdaftar
+            }
+            console.error("Email check failed:", error);
+            return false;
+        }
+    };    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-
+    
         setLoading(true);
-
+    
         try {
-            const dataToSubmit = {
-                ...formData,
-            };
-
+            const emailExists = await checkEmailExists(formData.email);
+            if (emailExists) {
+                setErrors((prev) => ({ ...prev, email: "Email sudah terdaftar" }));
+                setLoading(false);
+                return;
+            }
+    
+            const dataToSubmit = { ...formData };
+    
             await axios.post(`${import.meta.env.VITE_API_URL}/api/users`, dataToSubmit, {
                 headers: { "Content-Type": "application/json" },
             });
-
+    
             setFormData({
                 name: "",
                 email: "",
                 password: "",
                 userType: "",
             });
-
+    
             window.location.href = "/";
         } catch (error) {
             console.error("Error:", error.response?.data || error.message);
@@ -66,7 +86,7 @@ export function AddTeknisi() {
         } finally {
             setLoading(false);
         }
-    };
+    };    
 
     const handleCancel = () => {
         window.location.href = "/";
@@ -102,6 +122,7 @@ export function AddTeknisi() {
                             placeholder="Email"
                         />
                         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                        {emailExists && <p className="text-red-500 text-sm">Email sudah terdaftar</p>} {/* Email exists error */}
                     </div>
 
                     <div>
@@ -134,7 +155,7 @@ export function AddTeknisi() {
                         <button type="button" onClick={handleCancel} className="btn btn-secondary w-1/3">
                             Batal
                         </button>
-                        <button type="submit" disabled={loading} className="btn btn-primary w-1/3">
+                        <button type="submit" disabled={loading || emailExists} className="btn btn-primary w-1/3">
                             {loading ? "Loading..." : "Simpan"}
                         </button>
                     </div>

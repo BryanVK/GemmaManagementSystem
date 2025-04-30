@@ -30,6 +30,25 @@ export const getMachine = async (req, res) => {
     }
 };
 
+export const getUsersEmail = async (req, res) => {
+    try {
+        const { email } = req.query; // Ambil serialNo dari request
+        if (!email) {
+            return res.status(400).json({ message: 'email is required' });
+        }
+        
+        const users = await clientService.getUsersEmail(email);
+        if (users.length != 0) {
+            return res.status(404).json({ message: 'email sudah terdaftar' });
+        }
+
+        res.status(200).json(users);
+    } catch (err) {
+        console.error('Error fetching machine:', err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
 export const getUsers = async (req, res) => {
     try{
         const clients = await clientService.getUsers();

@@ -17,6 +17,11 @@ export const getMachine = async (serialNo) => {
     return rows;
 };
 
+export const getUsersEmail = async (email) => {
+    const { rows } = await query('SELECT * FROM users WHERE "email" = $1', [email]);
+    return rows;
+};
+
 export const getUsers = async () => {
     const { rows } = await query('SELECT * FROM users WHERE "userType" = \'Teknisi\'');
     return rows;
