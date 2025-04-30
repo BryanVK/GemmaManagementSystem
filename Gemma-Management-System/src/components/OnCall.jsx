@@ -110,29 +110,36 @@ export function OnCall() {
     
     const handleCopyReport = (item, index) => {
         const report = 
-    `Laporan Oncall
-    No: ${index + 1}
-    ID: ${item.id}
-    Type: ${item.type}
-    Serial: ${item.serial}
-    Model: ${item.model}
-    Nama Cabang: ${item.namacabang}
-    Teknisi: ${item.teknisi}
-    Problem: ${item.problem}
-    Kategori Kerusakan: ${item.kategori_kerusakan}
-    Nama Customer: ${item.nama_customer}
-    No Tlp Customer: ${item.no_tlp_customer}
-    Status: ${item.status}
-    Create By: ${item.create_by}
-    Date: ${item.date}`;
+        `Laporan Oncall
+        No: ${index + 1}
+        ID: ${item.id}
+        Type: ${item.type}
+        Serial: ${item.serial}
+        Model: ${item.model}
+        Nama Cabang: ${item.namacabang}
+        Teknisi: ${item.teknisi}
+        Problem: ${item.problem}
+        Kategori Kerusakan: ${item.kategori_kerusakan}
+        Nama Customer: ${item.nama_customer}
+        No Tlp Customer: ${item.no_tlp_customer}
+        Status: ${item.status}
+        Create By: ${item.create_by}
+        Date: ${item.date}`;
     
-        navigator.clipboard.writeText(report)
-            .then(() => {
-                alert("Laporan berhasil disalin ke clipboard.");
-            })
-            .catch(err => {
-                console.error("Gagal menyalin: ", err);
-            });
+        // Check if the Clipboard API is available
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(report)
+                .then(() => {
+                    alert("Laporan berhasil disalin ke clipboard.");
+                })
+                .catch(err => {
+                    console.error("Gagal menyalin: ", err);
+                    alert("Gagal menyalin laporan ke clipboard.");
+                });
+        } else {
+            console.error("Clipboard API tidak tersedia di browser ini.");
+            alert("Clipboard API tidak tersedia. Pastikan aplikasi dijalankan di HTTPS.");
+        }
     };    
     
     return (
