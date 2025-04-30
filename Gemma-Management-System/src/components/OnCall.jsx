@@ -125,9 +125,9 @@ export function OnCall() {
         Status: ${item.status}
         Create By: ${item.create_by}
         Date: ${item.date}`;
-        
-        // Cek apakah Clipboard API tersedia
+    
         if (navigator.clipboard) {
+            // Clipboard API supported
             navigator.clipboard.writeText(report)
                 .then(() => {
                     alert("Laporan berhasil disalin ke clipboard.");
@@ -137,18 +137,17 @@ export function OnCall() {
                     alert("Gagal menyalin laporan ke clipboard.");
                 });
         } else {
-            // Clipboard API tidak tersedia, gunakan fallback dengan document.execCommand
+            // Clipboard API not supported, fallback
             const textarea = document.createElement('textarea');
             textarea.value = report;
             document.body.appendChild(textarea);
             textarea.select();
             const successful = document.execCommand('copy');
             document.body.removeChild(textarea);
-            
+    
             if (successful) {
                 alert("Laporan berhasil disalin ke clipboard.");
             } else {
-                console.error("Gagal menyalin dengan fallback.");
                 alert("Gagal menyalin laporan ke clipboard.");
             }
         }
