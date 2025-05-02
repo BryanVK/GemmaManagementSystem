@@ -19,14 +19,12 @@ export function Login({ onLoginSuccess }) {
       const data = await response.json();
 
       if (response.ok) {
-        const expiredAt = new Date();
-        expiredAt.setHours(expiredAt.getHours() + 1); // 2 jam stay login
+      
 
         localStorage.setItem(
           "user",
           JSON.stringify({
             ...data.user,
-            expiredAt: expiredAt.toISOString(),
           })
         );
 

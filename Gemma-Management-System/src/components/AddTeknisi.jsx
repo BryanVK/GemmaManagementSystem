@@ -12,7 +12,6 @@ export function AddTeknisi() {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [errors, setErrors] = useState({});
-    const [emailExists, setEmailExists] = useState(false);
 
     const validateForm = () => {
         let newErrors = {};
@@ -25,30 +24,10 @@ export function AddTeknisi() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const checkEmailExists = async (email) => {
-        try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/usersEmail`, {
-                params: { email },
-            });
-            return false; // Email belum ada
-        } catch (error) {
-            if (error.response && error.response.status === 404) {
-                return true; // Email sudah terdaftar
-            }
-            console.error("Email check failed:", error);
-            return false;
-        }
-    };
-
-    const handleChange = async (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: "" }));
-
-        if (name === "email") {
-            const exists = await checkEmailExists(value);
-            setEmailExists(exists);
-        }
     };
 
     const handleSubmit = async (e) => {
@@ -57,14 +36,6 @@ export function AddTeknisi() {
 
         setLoading(true);
         try {
-            const isEmailExist = await checkEmailExists(formData.email);
-            if (isEmailExist) {
-                setErrors((prev) => ({ ...prev, email: "Email sudah terdaftar" }));
-                setEmailExists(true);
-                setLoading(false);
-                return;
-            }
-
             await axios.post(`${import.meta.env.VITE_API_URL}/api/users`, formData, {
                 headers: { "Content-Type": "application/json" },
             });
@@ -75,7 +46,6 @@ export function AddTeknisi() {
                 password: "",
                 userType: "",
             });
-            setEmailExists(false);
             window.location.href = "/";
         } catch (error) {
             console.error("Error:", error.response?.data || error.message);
@@ -119,7 +89,6 @@ export function AddTeknisi() {
                             placeholder="Email"
                         />
                         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-                        {emailExists && <p className="text-red-500 text-sm">Email sudah terdaftar</p>}
                     </div>
 
                     <div>
@@ -152,7 +121,7 @@ export function AddTeknisi() {
                         <button type="button" onClick={handleCancel} className="btn btn-secondary w-1/3">
                             Batal
                         </button>
-                        <button type="submit" disabled={loading || emailExists} className="btn btn-primary w-1/3">
+                        <button type="submit" disabled={loading} className="btn btn-primary w-1/3">
                             {loading ? "Loading..." : "Simpan"}
                         </button>
                     </div>
