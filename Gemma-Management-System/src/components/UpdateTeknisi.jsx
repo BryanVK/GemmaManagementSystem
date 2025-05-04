@@ -132,138 +132,79 @@ export function UpdateTeknisi({ client, onClose }) {
                 <h2 className="text-lg font-semibold text-center">Update Data OnCall</h2>
 
                 <form onSubmit={handleUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div className="col-span-2">
-                        <input
-                            type="text"
-                            name="serial"
-                            value={formData.serial}
-                            readOnly
-                            className="input input-bordered w-full"
-                            placeholder="Serial"
-                        />
-                    </div>
+                    <input
+                        type="text"
+                        name="serial"
+                        value={formData.serial}
+                        readOnly
+                        className="input input-bordered w-full"
+                        placeholder="Serial"
+                    />
 
-                    <div>
-                        <input
-                            type="text"
-                            name="model"
-                            value={formData.model}
-                            readOnly
-                            className="input input-bordered w-full"
-                            placeholder="Model"
-                        />
-                    </div>
+                    <input
+                        type="text"
+                        name="model"
+                        value={formData.model}
+                        readOnly
+                        className="input input-bordered w-full"
+                        placeholder="Model"
+                    />
 
-                    <div>
-                        <input
-                            type="text"
-                            name="namacabang"
-                            value={formData.namacabang}
-                            readOnly
-                            className="input input-bordered w-full"
-                            placeholder="Nama Cabang"
-                        />
-                    </div>
+                    <input
+                        type="text"
+                        name="namacabang"
+                        value={formData.namacabang}
+                        readOnly
+                        className="input input-bordered w-full"
+                        placeholder="Nama Cabang"
+                    />
 
-                    <div>
-                        <input
-                            type="text"
-                            name="teknisi"
-                            value={formData.teknisi}
-                            readOnly
-                            className="input input-bordered w-full"
-                            placeholder="Teknisi"
-                        />
-                    </div>
+                    <input
+                        type="text"
+                        name="teknisi"
+                        value={formData.teknisi}
+                        readOnly
+                        className="input input-bordered w-full"
+                        placeholder="Teknisi"
+                    />
 
-                    <div>
-                        <input
-                            type="text"
-                            name="problem"
-                            value={formData.problem}
-                            readOnly
-                            className="input input-bordered w-full"
-                            placeholder="Problem"
-                        />
-                    </div>
+                    <select
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        className="select select-bordered w-full"
+                    >
+                        <option value="">Pilih Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Confirm">Confirm</option>
+                        <option value="On Location">On Location</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                    </select>
 
-                    <div>
-                        <input
-                            type="text"
-                            name="kategorikerusakan"
-                            value={formData.kategorikerusakan}
-                            readOnly
-                            className="input input-bordered w-full"
-                            placeholder="Kategori Kerusakan"
-                        />
-                    </div>
+                    <input
+                        name="lapker"
+                        onChange={handleChange}
+                        value={formData.lapker}
+                        className="input input-bordered w-full"
+                        placeholder="No Lapker"
+                    />
 
-                    <div>
-                        <input
-                            type="text"
-                            name="namacustomer"
-                            value={formData.namacustomer}
-                            readOnly
-                            className="input input-bordered w-full"
-                            placeholder="Nama Customer"
-                        />
-                    </div>
+                    <textarea
+                        name="note"
+                        onChange={handleChange}
+                        value={formData.note}
+                        className="textarea textarea-bordered w-full col-span-2"
+                        placeholder="Catatan Teknisi"
+                        rows={3}
+                    />
 
-                    <div>
-                        <input
-                            type="text"
-                            name="notelcustomer"
-                            value={formData.notelcustomer}
-                            readOnly
-                            className="input input-bordered w-full"
-                            placeholder="No Telp Customer"
-                        />
-                    </div>
-
-                    <div>
-                        <select
-                            name="status"
-                            value={formData.status}
-                            onChange={handleChange}
-                            className="select select-bordered w-full"
-                        >
-                            <option value="">Pilih Status</option>
-                            <option value="Active">Active</option>
-                            <option value="Confirm">Confirm</option>
-                            <option value="On Location">On Location</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                    </div>
-
-                    <div className="col-span-2">
-                        <input
-                            name="lapker"
-                            onChange={handleChange}
-                            className="input input-bordered w-full"
-                            placeholder="No Lapker"
-                            rows={3}
-                        />
-                    </div>
-
-                    <div className="col-span-2">
-                        <textarea
-                            name="note"
-                            onChange={handleChange}
-                            className="textarea textarea-bordered w-full"
-                            placeholder="Catatan Teknisi"
-                            rows={3}
-                        />
-                    </div>
-
-                    <div className="col-span-2">
-                        <input
-                            type="file"
-                            accept="image/*,.pdf"
-                            onChange={handleImageChange}
-                            className="file-input file-input-bordered w-full"
-                        />
-                    </div>
+                    <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        onChange={handleImageChange}
+                        className="file-input file-input-bordered w-full col-span-2"
+                    />
 
                     <div className="col-span-2 flex justify-between">
                         <button type="button" onClick={onClose} className="btn btn-secondary w-1/3">
