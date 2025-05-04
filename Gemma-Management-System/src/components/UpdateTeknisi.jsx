@@ -130,8 +130,7 @@ export function UpdateTeknisi({ client, onClose }) {
         <div className="fixed inset-0 flex items-center justify-center bg-opacity-90 backdrop-blur-md z-50">
             <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-lg z-10">
                 <h2 className="text-lg font-semibold text-center">Update Data OnCall</h2>
-
-                <form onSubmit={handleUpdate} className="grid grid-cols-1 gap-4 mt-4">
+                <form onSubmit={handleUpdate} className="flex flex-col gap-4 mt-4">
                     <input
                         type="text"
                         name="serial"
@@ -206,7 +205,7 @@ export function UpdateTeknisi({ client, onClose }) {
                         className="file-input file-input-bordered w-full"
                     />
 
-                    <div className="col-span-2 flex justify-between">
+                    <div className="flex justify-between">
                         <button type="button" onClick={onClose} className="btn btn-secondary w-1/3">
                             Batal
                         </button>
