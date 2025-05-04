@@ -36,7 +36,7 @@ export function CreatePM() {
         let newErrors = {};
         
         if (formData.serials.length === 0) {
-            newErrors.serial = "Minimal 1 serial harus ditambahkan...     ------->>>>>>> klik tambah disini";
+            newErrors.serial = "Minimal 1 serial harus ditambahkan -------> klik tambah disini";
         }
     
         Object.keys(formData).forEach((key) => {
@@ -244,8 +244,8 @@ export function CreatePM() {
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
                 <h2 className="text-lg font-semibold text-center">Tambah Data PM</h2>
 
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div className="col-span-2">
+                <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 mt-4">
+                    <div className="col-span-1">
                         <div className="flex gap-2">
                             <input 
                                 type="text" 
@@ -268,7 +268,6 @@ export function CreatePM() {
                         {errors.serial && <p className="text-red-500 text-sm">{errors.serial}</p>}
                         {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
 
-                        {/* Tampilkan daftar serial yang telah ditambahkan */}
                         <ul className="mt-2 text-sm list-disc list-inside">
                             {formData.serials.map((serial, index) => (
                                 <li key={index}>
@@ -288,10 +287,9 @@ export function CreatePM() {
                                 </li>
                             ))}
                         </ul>
-
                     </div>
-                    {errorMsg && <p className="text-red-500 text-sm col-span-2">{errorMsg}</p>}
-                    <div>
+
+                    <div className="col-span-1">
                         <input 
                             type="text" 
                             name="model" 
@@ -309,7 +307,7 @@ export function CreatePM() {
                         {errors.model && <p className="text-red-500 text-sm">{errors.model}</p>}
                     </div>
 
-                    <div>
+                    <div className="col-span-1">
                         <input 
                             type="text" 
                             name="namacabang" 
@@ -327,28 +325,28 @@ export function CreatePM() {
                         {errors.namacabang && <p className="text-red-500 text-sm">{errors.namacabang}</p>}
                     </div>
 
-                    <div>
+                    <div className="col-span-1">
                         <input 
                             type="text" 
                             name="alamat" 
-                            value={formData.alamat || ""}  // Set default value to empty string if not filled
-                            onChange={handleChange}  // Allow the user to update the value
+                            value={formData.alamat || ""} 
+                            onChange={handleChange} 
                             className="input input-bordered w-full" 
                             placeholder="Alamat" 
                         />
                     </div>
 
-                    <div>
+                    <div className="col-span-1">
                         <input 
                             name="teknisi" 
                             value={user.name} 
                             className="input input-bordered w-full"
-                        >
-                        </input>
+                            readOnly
+                        />
                         {errors.teknisi && <p className="text-red-500 text-sm">{errors.teknisi}</p>}
                     </div>
 
-                    <div>
+                    <div className="col-span-1">
                         <input 
                             type="text" 
                             name="status" 
@@ -357,10 +355,10 @@ export function CreatePM() {
                             className="input input-bordered w-full" 
                             placeholder="Status" 
                         />
-                        {errors.notelcustomer && <p className="text-red-500 text-sm">{errors.status}</p>}
+                        {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
                     </div>
 
-                    <div>
+                    <div className="col-span-1">
                         <input 
                             type="text" 
                             name="date" 
