@@ -4,10 +4,12 @@ import { CreateOnCall } from "./CreateOnCall";
 import { TaskList } from "./TaskList";
 import { AddMachine } from "./AddMachine";
 import { AddTeknisi } from "./AddTeknisi";
+import { CreatePM } from "./CreatePM";
+
 
 export function Menu() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const [isPMModalOpen, setIsPMModalOpen] = useState(false);
     const user = JSON.parse(localStorage.getItem("user"));
     const userType = user?.userType;
 
@@ -23,12 +25,20 @@ export function Menu() {
             <div className="drawer-content flex flex-col items-start justify-start p-4">
                 {/* Tombol Create hanya muncul saat halaman OnCall aktif dan user Admin */}
                 {activeComponent === "OnCall" && userType === "Admin" && (
-                    <button
-                        className="btn btn-outline btn-primary mb-4"
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        Create
-                    </button>
+                    <div className="flex gap-2 mb-4">
+                        <button
+                            className="btn btn-outline btn-primary"
+                            onClick={() => setIsModalOpen(true)}
+                        >
+                            Create
+                        </button>
+                        <button
+                            className="btn btn-outline btn-success"
+                            onClick={() => setIsPMModalOpen(true)}
+                        >
+                            Create PM
+                        </button>
+                    </div>
                 )}
 
                 {/* Tampilan berdasarkan userType */}
@@ -142,6 +152,23 @@ export function Menu() {
                     </div>
                 </div>
             )}
+
+            {isPMModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-800/50 backdrop-blur-sm z-50">
+                    <div className="bg-white p-6 rounded-md shadow-md w-full max-w-lg">
+                        <CreatePM />
+                        <div className="flex justify-end mt-4">
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => setIsPMModalOpen(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
