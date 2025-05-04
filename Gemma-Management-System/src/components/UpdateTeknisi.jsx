@@ -131,7 +131,7 @@ export function UpdateTeknisi({ client, onClose }) {
             <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-lg z-10">
                 <h2 className="text-lg font-semibold text-center">Update Data OnCall</h2>
 
-                <form onSubmit={handleUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <form onSubmit={handleUpdate} className="grid grid-cols-1 gap-4 mt-4">
                     <input
                         type="text"
                         name="serial"
@@ -194,7 +194,7 @@ export function UpdateTeknisi({ client, onClose }) {
                         name="note"
                         onChange={handleChange}
                         value={formData.note}
-                        className="textarea textarea-bordered w-full col-span-2"
+                        className="textarea textarea-bordered w-full"
                         placeholder="Catatan Teknisi"
                         rows={3}
                     />
@@ -203,7 +203,7 @@ export function UpdateTeknisi({ client, onClose }) {
                         type="file"
                         accept="image/*,.pdf"
                         onChange={handleImageChange}
-                        className="file-input file-input-bordered w-full col-span-2"
+                        className="file-input file-input-bordered w-full"
                     />
 
                     <div className="col-span-2 flex justify-between">
