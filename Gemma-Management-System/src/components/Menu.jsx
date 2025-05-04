@@ -30,7 +30,7 @@ export function Menu() {
                             className="btn btn-outline btn-primary"
                             onClick={() => setIsModalOpen(true)}
                         >
-                            Create
+                            Create CM
                         </button>
                         <button
                             className="btn btn-outline btn-success"
