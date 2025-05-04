@@ -174,7 +174,6 @@ export function UpdateTeknisi({ client, onClose }) {
                         className="select select-bordered w-full"
                     >
                         <option value="">Pilih Status</option>
-                        <option value="Active">Active</option>
                         <option value="Confirm">Confirm</option>
                         <option value="On Location">On Location</option>
                         <option value="Pending">Pending</option>
