@@ -4,7 +4,7 @@ import { CreateOnCall } from "./CreateOnCall";
 import { TaskList } from "./TaskList";
 import { AddMachine } from "./AddMachine";
 import { AddTeknisi } from "./AddTeknisi";
-import { CreatePM } from "./CreatePM";
+import { CreatePM } from "./CreatePM_admin";
 
 
 export function Menu() {
