@@ -332,7 +332,7 @@ export function CreatePM() {
                             type="text" 
                             name="alamat" 
                             value={formData.alamat || ""}  // Set default value to empty string if not filled
-                            readOnly  // This can be read-only, or you can make it editable
+                            onChange={handleChange}  // Allow the user to update the value
                             className="input input-bordered w-full" 
                             placeholder="Alamat" 
                         />
