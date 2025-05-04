@@ -4,7 +4,7 @@ import { CreateOnCall } from "./CreateOnCall";
 import { TaskList } from "./TaskList";
 import { AddMachine } from "./AddMachine";
 import { AddTeknisi } from "./AddTeknisi";
-import { CreatePM } from "./CreatePM_admin";
+import { CreatePM_admin} from "./CreatePM_admin";
 
 
 export function Menu() {
@@ -156,7 +156,7 @@ export function Menu() {
             {isPMModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-800/50 backdrop-blur-sm z-50">
                     <div className="bg-white p-6 rounded-md shadow-md w-full max-w-lg">
-                        <CreatePM />
+                        <CreatePM_admin />
                         <div className="flex justify-end mt-4">
                             <button
                                 className="btn btn-secondary"
