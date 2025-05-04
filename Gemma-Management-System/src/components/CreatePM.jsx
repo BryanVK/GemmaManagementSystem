@@ -36,7 +36,7 @@ export function CreatePM() {
         let newErrors = {};
         
         if (formData.serials.length === 0) {
-            newErrors.serial = "Minimal 1 serial harus ditambahkan";
+            newErrors.serial = "Minimal 1 serial harus ditambahkan...     ------->>>>>>> klik tambah disini";
         }
     
         Object.keys(formData).forEach((key) => {
