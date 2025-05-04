@@ -10,7 +10,7 @@ export function CreatePM() {
     };
     const user = JSON.parse(localStorage.getItem("user"));
     const [formData, setFormData] = useState({
-        serial: "",
+        serials: [], // ganti dari "serial" menjadi array "serials"
         model: "",
         namacabang: "",
         teknisi: user.name,
@@ -19,8 +19,10 @@ export function CreatePM() {
         createby: user.name,
         emailadmin: user.email,
         type: "PM",
-        active: formatDateTime() // Langsung isi saat init
-    });    
+        active: formatDateTime(),
+        alamat: ""
+    });
+    const [currentSerial, setCurrentSerial] = useState("");    
 
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -32,15 +34,20 @@ export function CreatePM() {
 
     const validateForm = () => {
         let newErrors = {};
+        
+        if (formData.serials.length === 0) {
+            newErrors.serial = "Minimal 1 serial harus ditambahkan";
+        }
+    
         Object.keys(formData).forEach((key) => {
-            if (!formData[key]) {
+            if (!formData[key] && key !== "serials") {
                 newErrors[key] = "Field ini wajib diisi";
             }
         });
-
+    
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };
+    };    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -48,8 +55,10 @@ export function CreatePM() {
         setErrors((prev) => ({ ...prev, [name]: "" }));
     
         if (name === "serial") {
+            setCurrentSerial(value);
             fetchMachineData(value);
-        }
+            return;
+        }        
     
         if (name === "model") {
             fetchAvailableModels(value);
@@ -65,6 +74,19 @@ export function CreatePM() {
         }
     };
 
+    const handleAddSerial = () => {
+        if (currentSerial && !formData.serials.includes(currentSerial)) {
+            setFormData(prev => ({
+                ...prev,
+                serials: [...prev.serials, currentSerial]
+            }));
+            setCurrentSerial("");
+            setErrorMsg("");
+        } else {
+            setErrorMsg("Serial sudah ditambahkan atau kosong.");
+        }
+    };
+    
     const fetchMachineData = async (serial) => {
         if (!serial) return;
     
@@ -149,11 +171,12 @@ export function CreatePM() {
     
             const dataToSubmit = {
                 ...formData,
+                serial: formData.serials.join(','), // gabungkan serial jadi string
                 no: nextOC,
                 type: "PM",
                 teknisi: user.name,
                 active: formData.status === "Active" ? formatDateTime() : null,
-            };
+            };            
     
             await axios.post(`${import.meta.env.VITE_API_URL}/api/clients`, dataToSubmit, {
                 headers: { "Content-Type": "application/json" },
@@ -170,7 +193,7 @@ export function CreatePM() {
             console.log("Email sent!");
     
             setFormData({
-                serial: "",
+                serials: [],
                 model: "",
                 namacabang: "",
                 teknisi: user.name,
@@ -179,8 +202,9 @@ export function CreatePM() {
                 createby: user.name,
                 emailadmin: user.email,
                 type: "PM",
-                active: ""
-            });
+                active: "",
+                alamat: ""
+            });            
     
             window.location.href = "/";
     
@@ -222,25 +246,51 @@ export function CreatePM() {
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div className="col-span-2">
-                        <input 
-                            type="text" 
-                            name="serial" 
-                            list="serial-suggestions"
-                            value={formData.serial} 
-                            onChange={handleChange} 
-                            className="input input-bordered w-full" 
-                            placeholder="Serial" 
-                        />
+                        <div className="flex gap-2">
+                            <input 
+                                type="text" 
+                                name="serial" 
+                                list="serial-suggestions"
+                                value={currentSerial} 
+                                onChange={handleChange} 
+                                className="input input-bordered w-full" 
+                                placeholder="Tambah Serial" 
+                            />
+                            <button type="button" onClick={handleAddSerial} className="btn btn-outline">
+                                +
+                            </button>
+                        </div>
                         <datalist id="serial-suggestions">
                             {availableSerials.map((serial, idx) => (
                                 <option key={idx} value={serial} />
                             ))}
                         </datalist>
                         {errors.serial && <p className="text-red-500 text-sm">{errors.serial}</p>}
+                        {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+
+                        {/* Tampilkan daftar serial yang telah ditambahkan */}
+                        <ul className="mt-2 text-sm list-disc list-inside">
+                            {formData.serials.map((serial, index) => (
+                                <li key={index}>
+                                    {serial}
+                                    <button 
+                                        type="button" 
+                                        onClick={() => {
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                serials: prev.serials.filter((s) => s !== serial)
+                                            }));
+                                        }}
+                                        className="ml-2 text-red-500"
+                                    >
+                                        ×
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+
                     </div>
-
                     {errorMsg && <p className="text-red-500 text-sm col-span-2">{errorMsg}</p>}
-
                     <div>
                         <input 
                             type="text" 
