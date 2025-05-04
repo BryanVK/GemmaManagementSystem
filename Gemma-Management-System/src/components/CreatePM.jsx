@@ -244,8 +244,9 @@ export function CreatePM() {
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
                 <h2 className="text-lg font-semibold text-center">Tambah Data PM</h2>
 
-                <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 mt-4">
-                    <div className="col-span-1">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    {/* Serial Input */}
+                    <div className="col-span-2 md:col-span-1">
                         <div className="flex gap-2">
                             <input 
                                 type="text" 
@@ -268,6 +269,7 @@ export function CreatePM() {
                         {errors.serial && <p className="text-red-500 text-sm">{errors.serial}</p>}
                         {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
 
+                        {/* Display the added serials */}
                         <ul className="mt-2 text-sm list-disc list-inside">
                             {formData.serials.map((serial, index) => (
                                 <li key={index}>
@@ -289,12 +291,13 @@ export function CreatePM() {
                         </ul>
                     </div>
 
-                    <div className="col-span-1">
+                    {/* Model Input */}
+                    <div className="col-span-2 md:col-span-1">
                         <input 
                             type="text" 
                             name="model" 
                             list="model-suggestions"
-                            value={formData.model || ""}
+                            value={formData.model || ""} 
                             onChange={handleChange} 
                             className="input input-bordered w-full" 
                             placeholder="Model" 
@@ -307,7 +310,8 @@ export function CreatePM() {
                         {errors.model && <p className="text-red-500 text-sm">{errors.model}</p>}
                     </div>
 
-                    <div className="col-span-1">
+                    {/* Cabang Input */}
+                    <div className="col-span-2 md:col-span-1">
                         <input 
                             type="text" 
                             name="namacabang" 
@@ -325,18 +329,20 @@ export function CreatePM() {
                         {errors.namacabang && <p className="text-red-500 text-sm">{errors.namacabang}</p>}
                     </div>
 
-                    <div className="col-span-1">
+                    {/* Alamat Input */}
+                    <div className="col-span-2 md:col-span-1">
                         <input 
                             type="text" 
                             name="alamat" 
-                            value={formData.alamat || ""} 
-                            onChange={handleChange} 
+                            value={formData.alamat || ""}  
+                            onChange={handleChange}  
                             className="input input-bordered w-full" 
                             placeholder="Alamat" 
                         />
                     </div>
 
-                    <div className="col-span-1">
+                    {/* Teknisi Input */}
+                    <div className="col-span-2 md:col-span-1">
                         <input 
                             name="teknisi" 
                             value={user.name} 
@@ -346,7 +352,8 @@ export function CreatePM() {
                         {errors.teknisi && <p className="text-red-500 text-sm">{errors.teknisi}</p>}
                     </div>
 
-                    <div className="col-span-1">
+                    {/* Status Input */}
+                    <div className="col-span-2 md:col-span-1">
                         <input 
                             type="text" 
                             name="status" 
@@ -355,10 +362,10 @@ export function CreatePM() {
                             className="input input-bordered w-full" 
                             placeholder="Status" 
                         />
-                        {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
                     </div>
 
-                    <div className="col-span-1">
+                    {/* Date Input */}
+                    <div className="col-span-2 md:col-span-1">
                         <input 
                             type="text" 
                             name="date" 
