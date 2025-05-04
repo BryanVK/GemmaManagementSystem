@@ -13,7 +13,7 @@ export function CreatePM_admin() {
         serials: [], // ganti dari "serial" menjadi array "serials"
         model: "",
         namacabang: "",
-        teknisi: user.name,
+        teknisi: "",
         date: formatDateTime(),
         status: "Active",
         createby: user.name,
