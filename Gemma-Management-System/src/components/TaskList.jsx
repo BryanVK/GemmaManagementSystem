@@ -61,11 +61,11 @@ export function TaskList() {
 
     const filteredData = tableData.filter(item => {
         const matchesSearch =
-            item.serial.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.namacabang.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.teknisi.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.namacustomer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.status.toLowerCase().includes(searchQuery.toLowerCase());
+            (item.serial?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+            (item.namacabang?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+            (item.teknisi?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+            (item.namacustomer?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+            (item.status?.toLowerCase() || "").includes(searchQuery.toLowerCase());
 
         const matchesStatus =
             (selectedStatus === "All" && item.status !== "Completed") ||
