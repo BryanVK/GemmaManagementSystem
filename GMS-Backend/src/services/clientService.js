@@ -23,7 +23,7 @@ export const getUsersEmail = async (email) => {
 };
 
 export const getUsers = async () => {
-    const { rows } = await query('SELECT * FROM users WHERE "userType" = \'Teknisi\'');
+    const { rows } = await query('SELECT * FROM users');
     return rows;
 };
 

@@ -112,7 +112,7 @@ export function Menu() {
                                             : "hover:bg-gray-300"
                                     }`}
                                 >
-                                    Add Teknisi
+                                    Add Users
                                 </button>
                             </li>
                         </>

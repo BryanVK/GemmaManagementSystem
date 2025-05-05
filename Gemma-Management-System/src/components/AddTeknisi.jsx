@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 export function AddTeknisi() {
     const [formData, setFormData] = useState({
@@ -20,9 +21,20 @@ export function AddTeknisi() {
                 newErrors[key] = "Field ini wajib diisi";
             }
         });
+    
+        const isDuplicateName = existingUsers.some(
+            (user) => user.name.toLowerCase() === formData.name.toLowerCase()
+        );
+        const isDuplicateEmail = existingUsers.some(
+            (user) => user.email.toLowerCase() === formData.email.toLowerCase()
+        );
+    
+        if (isDuplicateName) newErrors.name = "Nama sudah digunakan";
+        if (isDuplicateEmail) newErrors.email = "Email sudah digunakan";
+    
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };
+    };    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -58,6 +70,21 @@ export function AddTeknisi() {
     const handleCancel = () => {
         window.location.href = "/";
     };
+
+    const [existingUsers, setExistingUsers] = useState([]);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`);
+                setExistingUsers(response.data || []);
+            } catch (error) {
+                console.error("Gagal mengambil data user:", error);
+            }
+        };
+        fetchUsers();
+    }, []);
+
 
     return (
         <div className="p-6 max-w-3xl mx-auto left-0">
