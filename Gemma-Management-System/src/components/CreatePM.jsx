@@ -10,7 +10,7 @@ export function CreatePM() {
     };
     const user = JSON.parse(localStorage.getItem("user"));
     const [formData, setFormData] = useState({
-        serials: [], // ganti dari "serial" menjadi array "serials"
+        serials: "", // Ubah menjadi string, bukan array
         model: "",
         namacabang: "",
         teknisi: user.name,
@@ -42,7 +42,7 @@ export function CreatePM() {
     
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };    
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -66,19 +66,6 @@ export function CreatePM() {
         }
         if (name === "status" && value === "Active") {
             setFormData((prev) => ({ ...prev, active: formatDateTime() }));
-        }
-    };
-
-    const handleAddSerial = () => {
-        if (currentSerial && !formData.serials.includes(currentSerial)) {
-            setFormData(prev => ({
-                ...prev,
-                serials: [...prev.serials, currentSerial]
-            }));
-            setCurrentSerial("");
-            setErrorMsg("");
-        } else {
-            setErrorMsg("Serial sudah ditambahkan atau kosong.");
         }
     };
 
@@ -122,7 +109,6 @@ export function CreatePM() {
                 .filter(m => m.MachineType?.toLowerCase().includes(keyword.toLowerCase()))
                 .map(m => m.MachineType);
 
-            // Buat list unik
             const uniqueModels = [...new Set(filteredModels)];
             setAvailableModels(uniqueModels);
         } catch (err) {
@@ -166,7 +152,7 @@ export function CreatePM() {
 
             const dataToSubmit = {
                 ...formData,
-                serial: formData.serials.join(','), // gabungkan serial jadi string
+                serial: formData.serials, // Langsung pakai serial sebagai string
                 no: nextOC,
                 type: "PM",
                 teknisi: user.name,
@@ -177,7 +163,6 @@ export function CreatePM() {
                 headers: { "Content-Type": "application/json" },
             });
 
-            // Ambil data teknisi dari API
             const responseUsers = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`);
             const teknisiEmail = responseUsers.data.find(user => user.name === formData.teknisi)?.email;
 
@@ -188,7 +173,7 @@ export function CreatePM() {
             console.log("Email sent!");
 
             setFormData({
-                serials: [],
+                serials: "",
                 model: "",
                 namacabang: "",
                 teknisi: user.name,
@@ -199,7 +184,7 @@ export function CreatePM() {
                 type: "PM",
                 active: "",
                 alamat: ""
-            });            
+            });
 
             window.location.href = "/";
 
@@ -261,7 +246,7 @@ export function CreatePM() {
 
                         {/* Display the added serials */}
                         <ul className="mt-2 text-sm list-disc list-inside">
-                            {formData.serials.map((serial, index) => (
+                            {formData.serials && formData.serials.split(',').map((serial, index) => (
                                 <li key={index}>
                                     {serial}
                                     <button 
@@ -269,7 +254,7 @@ export function CreatePM() {
                                         onClick={() => {
                                             setFormData(prev => ({
                                                 ...prev,
-                                                serials: prev.serials.filter((s) => s !== serial)
+                                                serials: prev.serials.split(',').filter((s) => s !== serial).join(',')
                                             }));
                                         }}
                                         className="ml-2 text-red-500"
@@ -345,9 +330,9 @@ export function CreatePM() {
                         <button 
                             type="button" 
                             onClick={handleCancel} 
-                            className="btn btn-outline w-full"
+                            className="btn btn-outline w-full mt-2"
                         >
-                            Cancel
+                            Batal
                         </button>
                     </div>
                 </form>
