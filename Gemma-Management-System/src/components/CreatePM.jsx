@@ -30,7 +30,6 @@ export function CreatePM() {
     const [availableSerials, setAvailableSerials] = useState([]);
     const [availableModels, setAvailableModels] = useState([]);
     const [availableCabangs, setAvailableCabangs] = useState([]);
-    
 
     const validateForm = () => {
         let newErrors = {};
@@ -53,13 +52,13 @@ export function CreatePM() {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: "" }));
-    
+
         if (name === "serial") {
             setCurrentSerial(value);
             fetchMachineData(value);
             return;
         }        
-    
+
         if (name === "model") {
             fetchAvailableModels(value);
             fetchAvailableSerials({ ...formData, model: value });
@@ -86,23 +85,23 @@ export function CreatePM() {
             setErrorMsg("Serial sudah ditambahkan atau kosong.");
         }
     };
-    
+
     const fetchMachineData = async (serial) => {
         if (!serial) return;
-    
+
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine?serialNo=${serial}`);
-    
+
             if (response.data.length > 0) {
                 const machine = response.data[0];
-    
+
                 setFormData((prev) => ({
                     ...prev,
                     model: machine.MachineType || "",
                     namacabang: machine.Customer || "",
                     alamat: machine.CustomerAddress || ""  // Add the address field here
                 }));
-    
+
                 setErrorMsg("");
             } else {
                 setFormData((prev) => ({
@@ -116,17 +115,17 @@ export function CreatePM() {
         } catch (error) {
             console.error("Error fetching machine data:", error);
         }
-    };    
+    };
 
     const fetchAvailableModels = async (keyword) => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const machines = response.data;
-    
+
             const filteredModels = machines
                 .filter(m => m.MachineType?.toLowerCase().includes(keyword.toLowerCase()))
                 .map(m => m.MachineType);
-    
+
             // Buat list unik
             const uniqueModels = [...new Set(filteredModels)];
             setAvailableModels(uniqueModels);
@@ -139,36 +138,36 @@ export function CreatePM() {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const machines = response.data;
-    
+
             const filteredCabangs = machines
                 .filter(m => m.Customer?.toLowerCase().includes(keyword.toLowerCase()))
                 .map(m => m.Customer);
-    
+
             const uniqueCabangs = [...new Set(filteredCabangs)];
             setAvailableCabangs(uniqueCabangs);
         } catch (err) {
             console.error("Error fetching cabangs:", err);
         }
     };
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-    
+
         setLoading(true);
-    
+
         try {
             // Ambil data client dan teknisi
             const responseClients = await axios.get(`${import.meta.env.VITE_API_URL}/api/clients`);
             const clients = responseClients.data;
-    
+
             const ocNumbers = clients
                 .map((client) => client.no)
                 .filter((no) => typeof no === "string" && /^OC\d{4}$/.test(no));
             const ocNumbersInt = ocNumbers.map((no) => parseInt(no.slice(2), 10));
             const maxOC = ocNumbersInt.length > 0 ? Math.max(...ocNumbersInt) : 0;
             const nextOC = `OC${(maxOC + 1).toString().padStart(4, "0")}`;
-    
+
             const dataToSubmit = {
                 ...formData,
                 serial: formData.serials.join(','), // gabungkan serial jadi string
@@ -177,21 +176,21 @@ export function CreatePM() {
                 teknisi: user.name,
                 active: formData.status === "Active" ? formatDateTime() : null,
             };            
-    
+
             await axios.post(`${import.meta.env.VITE_API_URL}/api/clients`, dataToSubmit, {
                 headers: { "Content-Type": "application/json" },
             });
-    
+
             // Ambil data teknisi dari API
             const responseUsers = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`);
             const teknisiEmail = responseUsers.data.find(user => user.name === formData.teknisi)?.email;
-            
+
             if (!teknisiEmail) {
                 throw new Error("Email teknisi tidak ditemukan");
-            }       
-    
+            }        
+
             console.log("Email sent!");
-    
+
             setFormData({
                 serials: [],
                 model: "",
@@ -205,17 +204,16 @@ export function CreatePM() {
                 active: "",
                 alamat: ""
             });            
-    
+
             window.location.href = "/";
-    
+
         } catch (error) {
             console.error("Error:", error.response?.data || error.message);
             setErrorMsg("Gagal mengirim email atau menyimpan data. Silakan coba lagi.");
         } finally {
             setLoading(false);
         }
-    };    
-    
+    };
 
     const handleCancel = () => {
         window.location.href = "/";
@@ -225,19 +223,18 @@ export function CreatePM() {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/machine`);
             const allMachines = response.data;
-    
+
             const filtered = allMachines.filter(machine => {
                 const matchModel = model ? machine.MachineType?.toLowerCase().includes(model.toLowerCase()) : true;
                 const matchCabang = namacabang ? machine.Customer?.toLowerCase().includes(namacabang.toLowerCase()) : true;
                 return matchModel && matchCabang;
             });
-    
+
             setAvailableSerials(filtered.map((m) => m.SerialNo));
         } catch (error) {
             console.error("Error fetching available serials:", error);
         }
     };
-    
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-opacity-30">
@@ -257,9 +254,6 @@ export function CreatePM() {
                                 className="input input-bordered w-full" 
                                 placeholder="Tambah Serial" 
                             />
-                            <button type="button" onClick={handleAddSerial} className="btn btn-outline">
-                                +
-                            </button>
                         </div>
                         <datalist id="serial-suggestions">
                             {availableSerials.map((serial, idx) => (
@@ -341,46 +335,23 @@ export function CreatePM() {
                         />
                     </div>
 
-                    {/* Teknisi Input */}
-                    <div className="col-span-2 md:col-span-1">
-                        <input 
-                            name="teknisi" 
-                            value={user.name} 
-                            className="input input-bordered w-full"
-                            readOnly
-                        />
-                        {errors.teknisi && <p className="text-red-500 text-sm">{errors.teknisi}</p>}
-                    </div>
-
-                    {/* Status Input */}
-                    <div className="col-span-2 md:col-span-1">
-                        <input 
-                            type="text" 
-                            name="status" 
-                            value={formData.status} 
-                            readOnly
-                            className="input input-bordered w-full" 
-                            placeholder="Status" 
-                        />
-                    </div>
-
-                    {/* Date Input */}
-                    <div className="col-span-2 md:col-span-1">
-                        <input 
-                            type="text" 
-                            name="date" 
-                            value={formData.date} 
-                            readOnly
-                            className="input input-bordered w-full" 
-                        />
-                    </div>
-
-                    <div className="col-span-2 flex justify-between mt-4">
-                        <button type="button" onClick={handleCancel} className="btn btn-secondary w-1/3">
-                            Batal
+                    {/* Submit & Cancel */}
+                    <div className="col-span-2">
+                        <button 
+                            type="submit" 
+                            className="btn btn-primary w-full" 
+                            disabled={loading}
+                        >
+                            {loading ? "Mengirim..." : "Submit"}
                         </button>
-                        <button type="submit" disabled={loading} className="btn btn-primary w-1/3">
-                            {loading ? "Loading..." : "Simpan"}
+                    </div>
+                    <div className="col-span-2 text-center">
+                        <button 
+                            type="button" 
+                            onClick={handleCancel} 
+                            className="btn btn-outline w-full"
+                        >
+                            Cancel
                         </button>
                     </div>
                 </form>
