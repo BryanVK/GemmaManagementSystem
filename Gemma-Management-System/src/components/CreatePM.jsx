@@ -10,7 +10,7 @@ export function CreatePM() {
     };
     const user = JSON.parse(localStorage.getItem("user"));
     const [formData, setFormData] = useState({
-        serials: [], // ganti dari "serial" menjadi array "serials"
+        serials: "", 
         model: "",
         namacabang: "",
         teknisi: user.name,
@@ -34,10 +34,6 @@ export function CreatePM() {
 
     const validateForm = () => {
         let newErrors = {};
-        
-        if (formData.serials.length === 0) {
-            newErrors.serial = "Minimal 1 serial harus ditambahkan -------> klik tambah disini";
-        }
     
         Object.keys(formData).forEach((key) => {
             if (!formData[key] && key !== "serials") {
@@ -71,19 +67,6 @@ export function CreatePM() {
         }
         if (name === "status" && value === "Active") {
             setFormData((prev) => ({ ...prev, active: formatDateTime() }));
-        }
-    };
-
-    const handleAddSerial = () => {
-        if (currentSerial && !formData.serials.includes(currentSerial)) {
-            setFormData(prev => ({
-                ...prev,
-                serials: [...prev.serials, currentSerial]
-            }));
-            setCurrentSerial("");
-            setErrorMsg("");
-        } else {
-            setErrorMsg("Serial sudah ditambahkan atau kosong.");
         }
     };
     
@@ -171,7 +154,7 @@ export function CreatePM() {
     
             const dataToSubmit = {
                 ...formData,
-                serial: formData.serials.join(','), // gabungkan serial jadi string
+                serial: formData.serials, // gabungkan serial jadi string
                 no: nextOC,
                 type: "PM",
                 teknisi: user.name,
@@ -257,9 +240,6 @@ export function CreatePM() {
                                 className="input input-bordered w-full" 
                                 placeholder="Tambah Serial" 
                             />
-                            <button type="button" onClick={handleAddSerial} className="btn btn-outline">
-                                +
-                            </button>
                         </div>
                         <datalist id="serial-suggestions">
                             {availableSerials.map((serial, idx) => (
