@@ -114,6 +114,7 @@ export function OnCall() {
 Serial: *${item.serial}*
 Model: *${item.model}*
 Nama Cabang: *${item.namacabang}*
+Alamat Cabang: *${item.alamat}*
 Teknisi: *${item.teknisi}*
 Problem: *${item.problem}*
 Kategori Kerusakan: *${item.kategorikerusakan}*
