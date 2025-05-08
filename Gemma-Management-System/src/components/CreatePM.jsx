@@ -10,7 +10,7 @@ export function CreatePM() {
     };
     const user = JSON.parse(localStorage.getItem("user"));
     const [formData, setFormData] = useState({
-        serials: [], // ganti dari "serial" menjadi array "serials"
+        serials: "", // ganti dari "serial" menjadi array "serials"
         model: "",
         namacabang: "",
         teknisi: user.name,
@@ -314,6 +314,7 @@ export function CreatePM() {
                             className="input input-bordered w-full" 
                             placeholder="Alamat" 
                         />
+                        {errors.alamat && <p className="text-red-500 text-sm">{errors.alamat}</p>}
                     </div>
 
                     {/* Teknisi Input */}
