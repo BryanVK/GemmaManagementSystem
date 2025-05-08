@@ -24,17 +24,17 @@ export function UpdateTeknisi({ client, onClose }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [image, setImage] = useState(null);
     const [hasSelectedStatus, setHasSelectedStatus] = useState(false);
-    
+
     useEffect(() => {
-        if (client) {
-            setFormData({
-                ...client,
-                note: client.note || "",
-                lapker: client.lapker || ""
-            });
-            setHasSelectedStatus(false); // user belum memilih ulang status
-        }
-    }, [client]);
+    if (client) {
+        setFormData({
+            ...client,
+            note: client.note || "",
+            lapker: client.lapker || "",
+            status: "", // kosongkan agar user harus pilih ulang
+        });
+    }
+}, [client]);
     
 
     const handleChange = (e) => {
@@ -73,7 +73,7 @@ export function UpdateTeknisi({ client, onClose }) {
             alert("Silakan pilih status terlebih dahulu sebelum submit.");
             setIsSubmitting(false);
             return;
-        }
+        }        
     
         const updatedData = {
             ...formData,
