@@ -40,13 +40,13 @@ export const createClient = async (clientData) => {
         // Tidak perlu generate nextNo di sini karena sudah dari frontend
         const { rows } = await query(
             `INSERT INTO OnCall (
-                serial, model, namacabang, teknisi, problem, 
+                serial, model, namacabang, alamat, teknisi, problem, 
                 kategorikerusakan, date, namacustomer, 
                 notelcustomer, status, createby, emailadmin, no, type
             ) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
             RETURNING *`, 
-            [serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, createby, emailadmin, no, type]
+            [serial, model, namacabang, alamat, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, createby, emailadmin, no, type]
         );
 
         console.log("Data Berhasil Disimpan:", rows[0]);
