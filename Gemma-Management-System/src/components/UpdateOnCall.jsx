@@ -87,6 +87,20 @@ export function UpdateOnCall({ client, onClose }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setErrors({});
+        setErrorMsg("");
+    
+        // Validasi wajib isi status
+        const newErrors = {};
+        if (!formData.status.trim()) {
+            newErrors.status = "Status harus diisi";
+        }
+    
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            setLoading(false);
+            return;
+        }
     
         try {
             // 1. Tandai data lama jadi Canceled
@@ -262,12 +276,16 @@ export function UpdateOnCall({ client, onClose }) {
                     </div>
 
                     <div>
-                    <input
+                        <input
                             name="status"
                             value={formData.status}
+                            onChange={handleChange}
                             className="input input-bordered w-full"
-                        />    
+                            placeholder="Status"
+                        />
+                        {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
                     </div>
+
 
                     <div className="col-span-2 flex justify-between mt-4">
                         <button type="button" onClick={onClose} className="btn btn-secondary w-1/3">
