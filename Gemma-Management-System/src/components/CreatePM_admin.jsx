@@ -10,10 +10,11 @@ export function CreatePM_admin() {
     };
     const user = JSON.parse(localStorage.getItem("user"));
     const [formData, setFormData] = useState({
-        serials: [], // ganti dari "serial" menjadi array "serials"
+        serial: "", // <-- Tambahkan ini
+        serials: [],
         model: "",
         namacabang: "",
-        teknisi: "",
+        teknisi: user.name,
         date: formatDateTime(),
         status: "Active",
         createby: user.name,
@@ -46,10 +47,6 @@ export function CreatePM_admin() {
 
     const validateForm = () => {
         let newErrors = {};
-        
-        if (formData.serials.length === 0) {
-            newErrors.serial = "serial harus ditambahkan";
-        }
     
         Object.keys(formData).forEach((key) => {
             if (!formData[key] && key !== "serials") {
@@ -57,9 +54,14 @@ export function CreatePM_admin() {
             }
         });
     
+        // Validasi khusus serial
+        if (!formData.serial || formData.serial.trim() === "") {
+            newErrors.serial = "Serial wajib diisi";
+        }
+    
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };    
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -258,20 +260,18 @@ export function CreatePM_admin() {
                 <h2 className="text-lg font-semibold text-center">Tambah Data PM</h2>
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div className="col-span-2">
+                <div className="col-span-2 md:col-span-1">
                         <div className="flex gap-2">
-                            <input 
-                                type="text" 
-                                name="serial" 
-                                list="serial-suggestions"
-                                value={currentSerial} 
-                                onChange={handleChange} 
-                                className="input input-bordered w-full" 
-                                placeholder="Tambah Serial" 
-                            />
-                            <button type="button" onClick={handleAddSerial} className="btn btn-outline">
-                                +
-                            </button>
+                        <input 
+                            type="text" 
+                            name="serial" 
+                            list="serial-suggestions"
+                            value={formData.serial} 
+                            onChange={handleChange} 
+                            className="input input-bordered w-full" 
+                            placeholder="Tambah Serial" 
+                        />
+
                         </div>
                         <datalist id="serial-suggestions">
                             {availableSerials.map((serial, idx) => (
@@ -280,30 +280,7 @@ export function CreatePM_admin() {
                         </datalist>
                         {errors.serial && <p className="text-red-500 text-sm">{errors.serial}</p>}
                         {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
-
-                        {/* Tampilkan daftar serial yang telah ditambahkan */}
-                        <ul className="mt-2 text-sm list-disc list-inside">
-                            {formData.serials.map((serial, index) => (
-                                <li key={index}>
-                                    {serial}
-                                    <button 
-                                        type="button" 
-                                        onClick={() => {
-                                            setFormData(prev => ({
-                                                ...prev,
-                                                serials: prev.serials.filter((s) => s !== serial)
-                                            }));
-                                        }}
-                                        className="ml-2 text-red-500"
-                                    >
-                                        ×
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-
                     </div>
-                    {errorMsg && <p className="text-red-500 text-sm col-span-2">{errorMsg}</p>}
                     <div>
                         <input 
                             type="text" 
