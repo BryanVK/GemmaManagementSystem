@@ -32,7 +32,7 @@ export const createClient = async (clientData) => {
         console.log("Data yang akan Disimpan ke DB:", clientData); // Debug
 
         const {
-            serial, model, namacabang, teknisi, problem,
+            serial, model, namacabang, alamat, teknisi, problem,
             kategorikerusakan, date, namacustomer,
             notelcustomer, status, createby, emailadmin, no, type
         } = clientData;
