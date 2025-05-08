@@ -22,6 +22,7 @@ export function UpdateTeknisi({ client, onClose }) {
         type: ""
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showStatusWarning, setShowStatusWarning] = useState(false);
     const [image, setImage] = useState(null);
     const [hasSelectedStatus, setHasSelectedStatus] = useState(false);
 
@@ -70,9 +71,11 @@ export function UpdateTeknisi({ client, onClose }) {
         setIsSubmitting(true);
     
         if (!formData.status) {
-            alert("Silakan pilih status terlebih dahulu sebelum submit.");
+            setShowStatusWarning(true);
             setIsSubmitting(false);
             return;
+        } else {
+            setShowStatusWarning(false);
         }        
     
         const updatedData = {
@@ -179,18 +182,23 @@ export function UpdateTeknisi({ client, onClose }) {
                         placeholder="Teknisi"
                     />
 
-                    <select
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                        className="select select-bordered w-full"
-                    >
-                        <option value="">Pilih Status</option>
-                        <option value="Confirm">Confirm</option>
-                        <option value="On Location">On Location</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Completed">Completed</option>
-                    </select>
+                    <div className="flex flex-col gap-1">
+                        <select
+                            name="status"
+                            value={formData.status}
+                            onChange={handleChange}
+                            className={`select select-bordered w-full ${showStatusWarning ? 'border-red-500' : ''}`}
+                        >
+                            <option value="">Pilih Status</option>
+                            <option value="Confirm">Confirm</option>
+                            <option value="On Location">On Location</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                        {showStatusWarning && (
+                            <p className="text-sm text-red-500">Silakan pilih status terlebih dahulu sebelum submit.</p>
+                        )}
+                    </div>
 
                     <input
                         name="lapker"
