@@ -31,7 +31,9 @@ export function CreatePM() {
 
     const validateForm = () => {
         let newErrors = {};
-    
+        if (formData.serials.length === 0) {
+            newErrors.serial = "serial harus ditambahkan";
+        }
         Object.keys(formData).forEach((key) => {
             if (!formData[key] && key !== "serials") {
                 newErrors[key] = "Field ini wajib diisi";
