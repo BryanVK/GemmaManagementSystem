@@ -10,7 +10,7 @@ export function CreatePM() {
     };
     const user = JSON.parse(localStorage.getItem("user"));
     const [formData, setFormData] = useState({
-        serials: "", // ganti dari "serial" menjadi array "serials"
+        serials: [], // ganti dari "serial" menjadi array "serials"
         model: "",
         namacabang: "",
         teknisi: user.name,
