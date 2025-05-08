@@ -85,16 +85,16 @@ export const createMachine = async (clientData) => {
 export const createClientsStatus = async (clientData) => {
     try {
         const {
-            serial, model, namacabang, teknisi, problem,
+            serial, model, namacabang, alamat, teknisi, problem,
             kategorikerusakan, date, namacustomer,
             notelcustomer, status, note, no, createby, emailadmin, lapker, type, image
         } = clientData;
 
         const { rows } = await query(
-            `INSERT INTO OnCall (serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, image) 
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+            `INSERT INTO OnCall (serial, model, namacabang, alamat, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, image) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
              RETURNING *`, 
-            [serial, model, namacabang, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, image]
+            [serial, model, namacabang, alamat, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, image]
         );
 
         return rows[0];
