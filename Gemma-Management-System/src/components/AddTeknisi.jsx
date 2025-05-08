@@ -5,7 +5,7 @@ export function AddTeknisi() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
-        password: "",
+        password: "gemma123",
         userType: "",
     });
 
@@ -54,7 +54,7 @@ export function AddTeknisi() {
             setFormData({
                 name: "",
                 email: "",
-                password: "",
+                password: "gemma123",
                 userType: "",
             });
             window.location.href = "/";
