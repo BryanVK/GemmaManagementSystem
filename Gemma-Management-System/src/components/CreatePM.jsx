@@ -243,27 +243,6 @@ export function CreatePM() {
                         </datalist>
                         {errors.serial && <p className="text-red-500 text-sm">{errors.serial}</p>}
                         {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
-
-                        {/* Display the added serials */}
-                        <ul className="mt-2 text-sm list-disc list-inside">
-                            {formData.serials.map((serial, index) => (
-                                <li key={index}>
-                                    {serial}
-                                    <button 
-                                        type="button" 
-                                        onClick={() => {
-                                            setFormData(prev => ({
-                                                ...prev,
-                                                serials: prev.serials.filter((s) => s !== serial)
-                                            }));
-                                        }}
-                                        className="ml-2 text-red-500"
-                                    >
-                                        ×
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
                     </div>
 
                     {/* Model Input */}
