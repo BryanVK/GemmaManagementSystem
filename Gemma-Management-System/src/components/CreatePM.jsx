@@ -22,15 +22,12 @@ export function CreatePM() {
         active: formatDateTime(),
         alamat: ""
     });
-    const [currentSerial, setCurrentSerial] = useState("");    
-
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [errors, setErrors] = useState({});
     const [availableSerials, setAvailableSerials] = useState([]);
     const [availableModels, setAvailableModels] = useState([]);
     const [availableCabangs, setAvailableCabangs] = useState([]);
-    
 
     const validateForm = () => {
         let newErrors = {};
@@ -55,7 +52,6 @@ export function CreatePM() {
         setErrors((prev) => ({ ...prev, [name]: "" }));
     
         if (name === "serial") {
-            setCurrentSerial(value);
             fetchMachineData(value);
             return;
         }        
@@ -71,19 +67,6 @@ export function CreatePM() {
         }
         if (name === "status" && value === "Active") {
             setFormData((prev) => ({ ...prev, active: formatDateTime() }));
-        }
-    };
-
-    const handleAddSerial = () => {
-        if (currentSerial && !formData.serials.includes(currentSerial)) {
-            setFormData(prev => ({
-                ...prev,
-                serials: [...prev.serials, currentSerial]
-            }));
-            setCurrentSerial("");
-            setErrorMsg("");
-        } else {
-            setErrorMsg("Serial sudah ditambahkan atau kosong.");
         }
     };
     
@@ -171,7 +154,6 @@ export function CreatePM() {
     
             const dataToSubmit = {
                 ...formData,
-                serial: formData.serials.join(','), // gabungkan serial jadi string
                 no: nextOC,
                 type: "PM",
                 teknisi: user.name,
@@ -252,14 +234,11 @@ export function CreatePM() {
                                 type="text" 
                                 name="serial" 
                                 list="serial-suggestions"
-                                value={currentSerial} 
+                                value={formData.serial} 
                                 onChange={handleChange} 
                                 className="input input-bordered w-full" 
                                 placeholder="Tambah Serial" 
                             />
-                            <button type="button" onClick={handleAddSerial} className="btn btn-outline">
-                                +
-                            </button>
                         </div>
                         <datalist id="serial-suggestions">
                             {availableSerials.map((serial, idx) => (

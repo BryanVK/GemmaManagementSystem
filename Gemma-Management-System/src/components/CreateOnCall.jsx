@@ -170,7 +170,7 @@ export function CreateOnCall() {
             const dataToSubmit = {
                 ...formData,
                 no: nextOC,
-                type: "OnCall",
+                type: "CM",
                 active: formData.status === "Active" ? formatDateTime() : null,
             };
     
