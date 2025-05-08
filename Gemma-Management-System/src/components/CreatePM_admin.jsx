@@ -326,6 +326,8 @@ export function CreatePM_admin() {
                             className="input input-bordered w-full" 
                             placeholder="Alamat" 
                         />
+                        {errors.alamat && <p className="text-red-500 text-sm">{errors.alamat}</p>}
+
                     </div>
 
                     <div>
