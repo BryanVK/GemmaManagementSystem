@@ -62,33 +62,37 @@ export function UpdateTeknisi({ client, onClose }) {
         if (isSubmitting) return;
         setIsSubmitting(true);
     
+        if (!formData.status) {
+            alert("Silakan pilih status terlebih dahulu sebelum submit.");
+            setIsSubmitting(false);
+            return;
+        }
+    
         const updatedData = {
             ...formData,
             date: formatDateTime(),
             note: formData.note?.trim() || "",
-            lapker: formData.lapker?.trim() || "", // pastikan kosong kalau tidak diisi
+            lapker: formData.lapker?.trim() || "",
         };
-        
+    
         const formPayload = new FormData();
         Object.keys(updatedData).forEach(key => {
             formPayload.append(key, updatedData[key]);
         });
-        
-        // ❗ Tambahkan hanya jika user benar-benar memilih file baru
+    
         if (image) {
             formPayload.append("image", image);
         } else {
-            formPayload.append("image", ""); // atau abaikan ini jika server-mu otomatis handle
-        }        
+            formPayload.append("image", "");
+        }
     
-        // Validasi jika status memerlukan bukti image
         const statusRequiringImage = ["On Location", "Pending", "Completed"];
         if (statusRequiringImage.includes(formData.status) && !image) {
             alert("Silakan unggah bukti (image) untuk status tersebut.");
             setIsSubmitting(false);
             return;
         }
-
+    
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/api/clients/status`, formPayload, {
                 headers: {
@@ -98,7 +102,6 @@ export function UpdateTeknisi({ client, onClose }) {
     
             console.log("Data berhasil diupdate!");
     
-            // Kirim email jika status berubah menjadi Completed
             if (client.status !== "Confirm" && formData.status === "Confirm") {
                 await emailjs.send('service_wbyy3q9', 'template_443kmer', {
                     nextOC: formData.no,

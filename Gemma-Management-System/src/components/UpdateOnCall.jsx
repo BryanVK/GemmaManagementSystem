@@ -27,6 +27,7 @@ export function UpdateOnCall({ client, onClose }) {
         if (client) {
             setFormData({
                 ...client,
+                status: "",
                 note: client.note || "" // pastikan note ada
             });
         }
