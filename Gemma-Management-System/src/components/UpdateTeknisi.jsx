@@ -23,7 +23,8 @@ export function UpdateTeknisi({ client, onClose }) {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [image, setImage] = useState(null);
-
+    const [hasSelectedStatus, setHasSelectedStatus] = useState(false);
+    
     useEffect(() => {
         if (client) {
             setFormData({
@@ -31,13 +32,19 @@ export function UpdateTeknisi({ client, onClose }) {
                 note: client.note || "",
                 lapker: client.lapker || ""
             });
+            setHasSelectedStatus(false); // user belum memilih ulang status
         }
     }, [client]);
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-    };
+    
+        if (name === "status") {
+            setHasSelectedStatus(true); // user telah memilih ulang
+        }
+    };    
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
