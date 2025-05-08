@@ -14,6 +14,7 @@ export function CreatePM_admin() {
         serials: [],
         model: "",
         namacabang: "",
+        alamat: "",
         teknisi: user.name,
         date: formatDateTime(),
         status: "Active",
@@ -21,7 +22,6 @@ export function CreatePM_admin() {
         emailadmin: user.email,
         type: "PM",
         active: formatDateTime(),
-        alamat: ""
     });
     const [currentSerial, setCurrentSerial] = useState("");    
     const [availableUsers, setAvailableUsers] = useState([]);
@@ -88,19 +88,6 @@ export function CreatePM_admin() {
             setFormData((prev) => ({ ...prev, active: formatDateTime() }));
         }
     };    
-
-    const handleAddSerial = () => {
-        if (currentSerial && !formData.serials.includes(currentSerial)) {
-            setFormData(prev => ({
-                ...prev,
-                serials: [...prev.serials, currentSerial]
-            }));
-            setCurrentSerial("");
-            setErrorMsg("");
-        } else {
-            setErrorMsg("Serial sudah ditambahkan atau kosong.");
-        }
-    };
     
     const fetchMachineData = async (serial) => {
         if (!serial) return;
@@ -211,6 +198,7 @@ export function CreatePM_admin() {
                 serials: [],
                 model: "",
                 namacabang: "",
+                alamat: "",
                 teknisi: user.name,
                 date: formatDateTime(),
                 status: "Active",
@@ -218,7 +206,6 @@ export function CreatePM_admin() {
                 emailadmin: user.email,
                 type: "PM",
                 active: "",
-                alamat: ""
             });            
     
             window.location.href = "/";

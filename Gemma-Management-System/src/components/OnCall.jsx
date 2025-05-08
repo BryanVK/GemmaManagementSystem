@@ -202,6 +202,7 @@ Date: *${formatDateTime(item.date)}*`;
                                 <th className="border border-gray-300 px-4 py-2">Serial</th>
                                 <th className="border border-gray-300 px-4 py-2">Model</th>
                                 <th className="border border-gray-300 px-4 py-2">Nama Cabang</th>
+                                <th className="border border-gray-300 px-4 py-2">Alamat</th>
                                 <th className="border border-gray-300 px-4 py-2">Teknisi</th>
                                 <th className="border border-gray-300 px-4 py-2">Problem</th>
                                 <th className="border border-gray-300 px-4 py-2">Kategori Kerusakan</th>
@@ -225,6 +226,7 @@ Date: *${formatDateTime(item.date)}*`;
                                         <td className="border border-gray-300 px-4 py-2">{item.serial}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.model}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.namacabang}</td>
+                                        <td className="border border-gray-300 px-4 py-2">{item.alamat}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.teknisi}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.problem}</td>
                                         <td className="border border-gray-300 px-4 py-2">{item.kategorikerusakan}</td>
