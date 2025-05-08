@@ -10,7 +10,8 @@ export function CreatePM() {
     };
     const user = JSON.parse(localStorage.getItem("user"));
     const [formData, setFormData] = useState({
-        serials: [], // ganti dari "serial" menjadi array "serials"
+        serial: "", // <-- Tambahkan ini
+        serials: [],
         model: "",
         namacabang: "",
         teknisi: user.name,
@@ -22,6 +23,7 @@ export function CreatePM() {
         active: formatDateTime(),
         alamat: ""
     });
+    
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [errors, setErrors] = useState({});
@@ -31,18 +33,22 @@ export function CreatePM() {
 
     const validateForm = () => {
         let newErrors = {};
-        if (formData.serials.length === 0) {
-            newErrors.serial = "serial harus ditambahkan";
-        }
+    
         Object.keys(formData).forEach((key) => {
             if (!formData[key] && key !== "serials") {
                 newErrors[key] = "Field ini wajib diisi";
             }
         });
     
+        // Validasi khusus serial
+        if (!formData.serial || formData.serial.trim() === "") {
+            newErrors.serial = "Serial wajib diisi";
+        }
+    
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
-    };    
+    };
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -228,15 +234,16 @@ export function CreatePM() {
                     {/* Serial Input */}
                     <div className="col-span-2 md:col-span-1">
                         <div className="flex gap-2">
-                            <input 
-                                type="text" 
-                                name="serial" 
-                                list="serial-suggestions"
-                                value={formData.serial} 
-                                onChange={handleChange} 
-                                className="input input-bordered w-full" 
-                                placeholder="Tambah Serial" 
-                            />
+                        <input 
+                            type="text" 
+                            name="serial" 
+                            list="serial-suggestions"
+                            value={formData.serial} 
+                            onChange={handleChange} 
+                            className="input input-bordered w-full" 
+                            placeholder="Tambah Serial" 
+                        />
+
                         </div>
                         <datalist id="serial-suggestions">
                             {availableSerials.map((serial, idx) => (
