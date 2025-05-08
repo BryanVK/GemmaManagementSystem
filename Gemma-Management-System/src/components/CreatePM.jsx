@@ -31,10 +31,6 @@ export function CreatePM() {
 
     const validateForm = () => {
         let newErrors = {};
-        
-        if (formData.serials.length === 0) {
-            newErrors.serial = "Minimal 1 serial harus ditambahkan -------> klik tambah disini";
-        }
     
         Object.keys(formData).forEach((key) => {
             if (!formData[key] && key !== "serials") {
