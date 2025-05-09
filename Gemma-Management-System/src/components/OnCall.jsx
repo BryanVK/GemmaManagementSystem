@@ -35,16 +35,34 @@ export function OnCall() {
         }
     };
 
+    const filteredData = getLatestEntriesByNo(tableData).filter(item => {
+        const matchesSearch =
+            (item.serial || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.namacabang || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.teknisi || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.namacustomer || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.status || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.createby || "").toLowerCase().includes(searchQuery.toLowerCase());
+    
+        const matchesStatus = selectedStatus === "All" || item.status === selectedStatus;
+    
+        const isWithinDateRange = startDate && endDate
+            ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
+            : true;
+    
+        return matchesSearch && matchesStatus && isWithinDateRange;
+    });
+    
     const sortedData = [...filteredData].sort((a, b) => {
         if (!sortField) return 0;
-
+    
         const aVal = a[sortField]?.toString().toLowerCase() || "";
         const bVal = b[sortField]?.toString().toLowerCase() || "";
-
+    
         if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
         if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
         return 0;
-    });
+    });    
 
     const getLatestEntriesByNo = (data) => {
         const latestMap = new Map();
@@ -86,25 +104,6 @@ export function OnCall() {
         setSelectedClient(null);
         fetchData();
     };
-
-    const filteredData = getLatestEntriesByNo(tableData).filter(item => {
-        const matchesSearch =
-            (item.serial || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.namacabang || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.teknisi || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.namacustomer || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.status || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.createby || "").toLowerCase().includes(searchQuery.toLowerCase());
-    
-        const matchesStatus =
-            selectedStatus === "All" || item.status === selectedStatus;
-    
-        const isWithinDateRange = startDate && endDate
-            ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
-            : true;
-    
-        return matchesSearch && matchesStatus && isWithinDateRange;
-    });  
 
     const exportToExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(filteredData);
