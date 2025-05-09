@@ -19,10 +19,32 @@ export function OnCall() {
     const [modalType, setModalType] = useState(""); // "edit" atau "history"
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [sortField, setSortField] = useState(null);
+    const [sortOrder, setSortOrder] = useState("asc");
 
     useEffect(() => {
         fetchData();
     }, []);
+
+    const handleSort = (field) => {
+        if (sortField === field) {
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+        } else {
+            setSortField(field);
+            setSortOrder("asc");
+        }
+    };
+
+    const sortedData = [...filteredData].sort((a, b) => {
+        if (!sortField) return 0;
+
+        const aVal = a[sortField]?.toString().toLowerCase() || "";
+        const bVal = b[sortField]?.toString().toLowerCase() || "";
+
+        if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
+        if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
+        return 0;
+    });
 
     const getLatestEntriesByNo = (data) => {
         const latestMap = new Map();
@@ -148,29 +170,7 @@ Date: *${formatDateTime(item.date)}*`;
             }
         }
     };    
-    
-    const [sortField, setSortField] = useState(null);
-    const [sortOrder, setSortOrder] = useState("asc");
 
-    const handleSort = (field) => {
-        if (sortField === field) {
-            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-        } else {
-            setSortField(field);
-            setSortOrder("asc");
-        }
-    };
-
-    const sortedData = [...filteredData].sort((a, b) => {
-        if (!sortField) return 0;
-
-        const aVal = a[sortField]?.toString().toLowerCase() || "";
-        const bVal = b[sortField]?.toString().toLowerCase() || "";
-
-        if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
-        if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
-        return 0;
-    });
 
     return (
         <div className="overflow-x-auto self-start w-full">
