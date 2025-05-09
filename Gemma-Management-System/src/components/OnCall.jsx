@@ -93,7 +93,7 @@ export function OnCall() {
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -238,7 +238,7 @@ Date: *${formatDateTime(item.date)}*`;
                                     Teknisi {sortField === "teknisi" && (sortOrder === "asc" ? "▲" : "▼")}
                                 </th>
                                 <th onClick={() => handleSort("problem")} className="cursor-pointer border border-gray-300 px-4 py-2">
-                                    Problem {sortField === "teknisi" && (sortOrder === "asc" ? "▲" : "▼")}
+                                    Problem {sortField === "problem" && (sortOrder === "asc" ? "▲" : "▼")}
                                 </th>
                                 <th onClick={() => handleSort("kategorikerusakan")} className="cursor-pointer border border-gray-300 px-4 py-2">
                                     Kategori {sortField === "kategorikerusakan" && (sortOrder === "asc" ? "▲" : "▼")}
