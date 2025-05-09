@@ -110,7 +110,7 @@ export function OnCall() {
     
     const handleCopyReport = (item, index) => {
         const report = 
-`*ONCALL*
+`*REPORT*
 Serial: *${item.serial}*
 Model: *${item.model}*
 Nama Cabang: *${item.namacabang}*
