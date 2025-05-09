@@ -40,6 +40,12 @@ export function HistoryOnCall({ client, onClose }) {
                 <h2 className="text-xl font-semibold text-center mb-6">
                     History OnCall - No: {client.no}
                 </h2>
+                <h3 className="text-xl font-semibold text-center mb-6">
+                    SN: {client.serial}
+                    Mesin: {client.model}
+                    Cabang: {client.namacabang}
+                    Teknisi: {client.teknisi}
+                </h3>
 
                 <div className="overflow-x-auto">
                     <table className="table-auto w-full border border-gray-300">
