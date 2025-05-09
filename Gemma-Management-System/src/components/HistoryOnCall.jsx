@@ -40,7 +40,7 @@ export function HistoryOnCall({ client, onClose }) {
                 <h2 className="text-xl font-semibold text-center mb-6">
                     History OnCall - No: {client.no}
                 </h2>
-                <h3 className="text-xl text-center mb-6">
+                <h3 className="text-xl text-left mb-6">
                     SN: {client.serial}<br />
                     Mesin: {client.model}<br />
                     Cabang: {client.namacabang}<br />
