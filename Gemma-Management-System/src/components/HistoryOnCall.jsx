@@ -41,12 +41,11 @@ export function HistoryOnCall({ client, onClose }) {
                     History OnCall - No: {client.no}
                 </h2>
                 <h3 className="text-xl text-center mb-6">
-                    SN: {client.serial}
-                    , Mesin: {client.model}
-                    , Cabang: {client.namacabang}
-                    , Teknisi: {client.teknisi}
+                    SN: {client.serial}<br />
+                    Mesin: {client.model}<br />
+                    Cabang: {client.namacabang}<br />
+                    Teknisi: {client.teknisi}
                 </h3>
-
                 <div className="overflow-x-auto">
                     <table className="table-auto w-full border border-gray-300">
                         <thead className="bg-gray-200">
