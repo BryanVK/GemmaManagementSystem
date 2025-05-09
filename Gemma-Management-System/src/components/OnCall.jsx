@@ -149,6 +149,31 @@ Date: *${formatDateTime(item.date)}*`;
         }
     };    
     
+    const [sortField, setSortField] = useState(null);
+    const [sortOrder, setSortOrder] = useState("asc");
+
+    const handleSort = (field) => {
+        if (sortField === field) {
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+        } else {
+            setSortField(field);
+            setSortOrder("asc");
+        }
+    };
+
+    const sortedData = [...filteredData].sort((a, b) => {
+        if (!sortField) return 0;
+
+        const aVal = a[sortField]?.toString().toLowerCase() || "";
+        const bVal = b[sortField]?.toString().toLowerCase() || "";
+
+        if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
+        if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
+        return 0;
+    });
+
+    const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
+
     return (
         <div className="overflow-x-auto self-start w-full">
             {loading && <p>Loading data...</p>}
@@ -199,17 +224,39 @@ Date: *${formatDateTime(item.date)}*`;
                                 <th className="border border-gray-300 px-4 py-2">No</th>
                                 <th className="border border-gray-300 px-4 py-2">ID</th>
                                 <th className="border border-gray-300 px-4 py-2">Type</th>
-                                <th className="border border-gray-300 px-4 py-2">Serial</th>
-                                <th className="border border-gray-300 px-4 py-2">Model</th>
-                                <th className="border border-gray-300 px-4 py-2">Nama Cabang</th>
-                                <th className="border border-gray-300 px-4 py-2">Alamat</th>
-                                <th className="border border-gray-300 px-4 py-2">Teknisi</th>
-                                <th className="border border-gray-300 px-4 py-2">Problem</th>
-                                <th className="border border-gray-300 px-4 py-2">Kategori Kerusakan</th>
-                                <th className="border border-gray-300 px-4 py-2">Nama Customer</th>
-                                <th className="border border-gray-300 px-4 py-2">No Tlp Customer</th>
-                                <th className="border border-gray-300 px-4 py-2">Status</th>
-                                <th className="border border-gray-300 px-4 py-2">Create By</th>
+                                <th onClick={() => handleSort("serial")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Serial {sortField === "serial" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("model")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Model {sortField === "model" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("namacabang")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Nama Cabang {sortField === "namacabang" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("alamat")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Alamat {sortField === "alamat" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("teknisi")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Teknisi {sortField === "teknisi" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("problem")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Problem {sortField === "teknisi" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("kategorikerusakan")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Kategori {sortField === "kategorikerusakan" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("namacustomer")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Customer {sortField === "namacustomer" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("notelcustomer")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    No Tlp {sortField === "notelcustomer" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("status")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Status {sortField === "status" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
+                                <th onClick={() => handleSort("createby")} className="cursor-pointer border border-gray-300 px-4 py-2">
+                                    Create By {sortField === "createby" && (sortOrder === "asc" ? "▲" : "▼")}
+                                </th>
                                 <th className="border border-gray-300 px-4 py-2">Date</th> {/* Tambah kolom Date */}
                                 <th className="border border-gray-300 px-4 py-2">Edit</th> 
                                 <th className="border border-gray-300 px-4 py-2">History</th>
