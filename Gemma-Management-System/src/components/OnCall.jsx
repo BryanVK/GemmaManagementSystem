@@ -35,6 +35,17 @@ export function OnCall() {
         }
     };
 
+    const getLatestEntriesByNo = (data) => {
+        const latestMap = new Map();
+        data.forEach(item => {
+            const existing = latestMap.get(item.no);
+            if (!existing || new Date(item.date) > new Date(existing.date)) {
+                latestMap.set(item.no, item);
+            }
+        });
+        return Array.from(latestMap.values());
+    };
+
     const filteredData = getLatestEntriesByNo(tableData).filter(item => {
         const matchesSearch =
             (item.serial || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -63,19 +74,6 @@ export function OnCall() {
         if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
         return 0;
     });    
-
-    const getLatestEntriesByNo = (data) => {
-        const latestMap = new Map();
-    
-        data.forEach(item => {
-            const existing = latestMap.get(item.no);
-            if (!existing || new Date(item.date) > new Date(existing.date)) {
-                latestMap.set(item.no, item);
-            }
-        });
-    
-        return Array.from(latestMap.values());
-    };
     
     const fetchData = async () => {
         try {
