@@ -82,6 +82,43 @@ export function OnCall() {
         XLSX.writeFile(workbook, "OnCall_Data.xlsx");
     };
 
+    let filteredData = getLatestEntriesByNo(tableData).filter(item => {
+        const matchesSearch =
+            (item.serial || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.namacabang || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.teknisi || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.namacustomer || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.status || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.createby || "").toLowerCase().includes(searchQuery.toLowerCase());
+    
+        const matchesStatus =
+            selectedStatus === "All" || item.status === selectedStatus;
+    
+        const isWithinDateRange = startDate && endDate
+            ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
+            : true;
+    
+        return matchesSearch && matchesStatus && isWithinDateRange;
+    });
+    
+    // Sorting logic
+    if (sortConfig.key) {
+        filteredData = [...filteredData].sort((a, b) => {
+            const valA = a[sortConfig.key] || "";
+            const valB = b[sortConfig.key] || "";
+    
+            if (typeof valA === "string" && typeof valB === "string") {
+                return sortConfig.direction === "asc"
+                    ? valA.localeCompare(valB)
+                    : valB.localeCompare(valA);
+            } else if (typeof valA === "number" && typeof valB === "number") {
+                return sortConfig.direction === "asc" ? valA - valB : valB - valA;
+            } else {
+                return 0;
+            }
+        });
+    }    
+    
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -139,43 +176,7 @@ Date: *${formatDateTime(item.date)}*`;
             }
         }
     };    
-    
-    let filteredData = getLatestEntriesByNo(tableData).filter(item => {
-        const matchesSearch =
-            (item.serial || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.namacabang || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.teknisi || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.namacustomer || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.status || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.createby || "").toLowerCase().includes(searchQuery.toLowerCase());
-    
-        const matchesStatus =
-            selectedStatus === "All" || item.status === selectedStatus;
-    
-        const isWithinDateRange = startDate && endDate
-            ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
-            : true;
-    
-        return matchesSearch && matchesStatus && isWithinDateRange;
-    });
-    
-    // Sorting logic
-    if (sortConfig.key) {
-        filteredData = [...filteredData].sort((a, b) => {
-            const valA = a[sortConfig.key] || "";
-            const valB = b[sortConfig.key] || "";
-    
-            if (typeof valA === "string" && typeof valB === "string") {
-                return sortConfig.direction === "asc"
-                    ? valA.localeCompare(valB)
-                    : valB.localeCompare(valA);
-            } else if (typeof valA === "number" && typeof valB === "number") {
-                return sortConfig.direction === "asc" ? valA - valB : valB - valA;
-            } else {
-                return 0;
-            }
-        });
-    }    
+
       
     return (
         <div className="overflow-x-auto self-start w-full">
