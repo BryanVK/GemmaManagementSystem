@@ -18,7 +18,9 @@ export function OnCall() {
     const [showHistory, setShowHistory] = useState(false); // State to control history modal visibility
     const [modalType, setModalType] = useState(""); // "edit" atau "history"
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
+    const itemsPerPage = 5;
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+
 
     useEffect(() => {
         fetchData();
@@ -37,6 +39,14 @@ export function OnCall() {
         return Array.from(latestMap.values());
     };
     
+    const handleSort = (key) => {
+        let direction = "asc";
+        if (sortConfig.key === key && sortConfig.direction === "asc") {
+          direction = "desc";
+        }
+        setSortConfig({ key, direction });
+      };
+      
     const fetchData = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/clients`);
@@ -64,25 +74,6 @@ export function OnCall() {
         setSelectedClient(null);
         fetchData();
     };
-
-    const filteredData = getLatestEntriesByNo(tableData).filter(item => {
-        const matchesSearch =
-            (item.serial || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.namacabang || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.teknisi || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.namacustomer || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.status || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.createby || "").toLowerCase().includes(searchQuery.toLowerCase());
-    
-        const matchesStatus =
-            selectedStatus === "All" || item.status === selectedStatus;
-    
-        const isWithinDateRange = startDate && endDate
-            ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
-            : true;
-    
-        return matchesSearch && matchesStatus && isWithinDateRange;
-    });  
 
     const exportToExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(filteredData);
@@ -149,6 +140,43 @@ Date: *${formatDateTime(item.date)}*`;
         }
     };    
     
+    let filteredData = getLatestEntriesByNo(tableData).filter(item => {
+        const matchesSearch =
+            (item.serial || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.namacabang || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.teknisi || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.namacustomer || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.status || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.createby || "").toLowerCase().includes(searchQuery.toLowerCase());
+    
+        const matchesStatus =
+            selectedStatus === "All" || item.status === selectedStatus;
+    
+        const isWithinDateRange = startDate && endDate
+            ? new Date(item.date) >= new Date(startDate) && new Date(item.date) <= new Date(endDate)
+            : true;
+    
+        return matchesSearch && matchesStatus && isWithinDateRange;
+    });
+    
+    // Sorting logic
+    if (sortConfig.key) {
+        filteredData = [...filteredData].sort((a, b) => {
+            const valA = a[sortConfig.key] || "";
+            const valB = b[sortConfig.key] || "";
+    
+            if (typeof valA === "string" && typeof valB === "string") {
+                return sortConfig.direction === "asc"
+                    ? valA.localeCompare(valB)
+                    : valB.localeCompare(valA);
+            } else if (typeof valA === "number" && typeof valB === "number") {
+                return sortConfig.direction === "asc" ? valA - valB : valB - valA;
+            } else {
+                return 0;
+            }
+        });
+    }    
+      
     return (
         <div className="overflow-x-auto self-start w-full">
             {loading && <p>Loading data...</p>}
@@ -194,27 +222,29 @@ Date: *${formatDateTime(item.date)}*`;
                     </div>
                     
                     <table className="table mt-2 border-collapse border border-gray-200 w-full">
-                        <thead>
-                            <tr className="bg-gray-200">
-                                <th className="border border-gray-300 px-4 py-2">No</th>
-                                <th className="border border-gray-300 px-4 py-2">ID</th>
-                                <th className="border border-gray-300 px-4 py-2">Type</th>
-                                <th className="border border-gray-300 px-4 py-2">Serial</th>
-                                <th className="border border-gray-300 px-4 py-2">Model</th>
-                                <th className="border border-gray-300 px-4 py-2">Nama Cabang</th>
-                                <th className="border border-gray-300 px-4 py-2">Alamat</th>
-                                <th className="border border-gray-300 px-4 py-2">Teknisi</th>
-                                <th className="border border-gray-300 px-4 py-2">Problem</th>
-                                <th className="border border-gray-300 px-4 py-2">Kategori Kerusakan</th>
-                                <th className="border border-gray-300 px-4 py-2">Nama Customer</th>
-                                <th className="border border-gray-300 px-4 py-2">No Tlp Customer</th>
-                                <th className="border border-gray-300 px-4 py-2">Status</th>
-                                <th className="border border-gray-300 px-4 py-2">Create By</th>
-                                <th className="border border-gray-300 px-4 py-2">Date</th> {/* Tambah kolom Date */}
-                                <th className="border border-gray-300 px-4 py-2">Edit</th> 
-                                <th className="border border-gray-300 px-4 py-2">History</th>
-                                <th className="border border-gray-300 px-4 py-2">Copy</th>
-                            </tr>
+                    <thead>
+                        <tr className="bg-[#f0f0f0] text-black">
+                            <th className="border px-4 py-2">No</th>
+                            <th className="border px-4 py-2 cursor-pointer" onClick={() => handleSort("serial")}>
+                            Serial {sortConfig.key === "serial" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                            </th>
+                            <th className="border px-4 py-2 cursor-pointer" onClick={() => handleSort("model")}>
+                            Model {sortConfig.key === "model" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                            </th>
+                            <th className="border px-4 py-2 cursor-pointer" onClick={() => handleSort("namacabang")}>
+                            Cabang {sortConfig.key === "namacabang" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                            </th>
+                            <th className="border px-4 py-2 cursor-pointer" onClick={() => handleSort("teknisi")}>
+                            Teknisi {sortConfig.key === "teknisi" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                            </th>
+                            <th className="border px-4 py-2 cursor-pointer" onClick={() => handleSort("status")}>
+                            Status {sortConfig.key === "status" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                            </th>
+                            <th className="border px-4 py-2 cursor-pointer" onClick={() => handleSort("createdAt")}>
+                            Tanggal {sortConfig.key === "createdAt" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+                            </th>
+                            <th className="border px-4 py-2">Aksi</th>
+                        </tr>
                         </thead>
                         <tbody>
                             {currentItems.length > 0 ? (
