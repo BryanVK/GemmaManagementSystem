@@ -172,8 +172,6 @@ Date: *${formatDateTime(item.date)}*`;
         return 0;
     });
 
-    const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
-
     return (
         <div className="overflow-x-auto self-start w-full">
             {loading && <p>Loading data...</p>}
