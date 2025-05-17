@@ -23,7 +23,7 @@ export function UpdateTeknisi({ client, onClose }) {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showStatusWarning, setShowStatusWarning] = useState(false);
-    const [image, setImage] = useState(null);
+    const [images, setImages] = useState([]);
     const [hasSelectedStatus, setHasSelectedStatus] = useState(false);
 
     useEffect(() => {
@@ -48,8 +48,8 @@ export function UpdateTeknisi({ client, onClose }) {
     };    
 
     const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        setImage(file);
+        const files = Array.from(e.target.files);
+        setImages(files);
     };
 
     const formatDateTime = () => {
@@ -66,52 +66,51 @@ export function UpdateTeknisi({ client, onClose }) {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-    
+
         if (isSubmitting) return;
         setIsSubmitting(true);
-    
+
         if (!formData.status) {
             setShowStatusWarning(true);
             setIsSubmitting(false);
             return;
         } else {
             setShowStatusWarning(false);
-        }        
-    
+        }
+
         const updatedData = {
             ...formData,
             date: formatDateTime(),
             note: formData.note?.trim() || "",
             lapker: formData.lapker?.trim() || "",
         };
-    
+
         const formPayload = new FormData();
         Object.keys(updatedData).forEach(key => {
             formPayload.append(key, updatedData[key]);
         });
-    
-        if (image) {
-            formPayload.append("image", image);
-        } else {
-            formPayload.append("image", "");
-        }
-    
+
+        // Tambahkan semua images ke FormData
+        images.forEach((img, index) => {
+            formPayload.append("images", img); // backend harus support multiple "images"
+        });
+
         const statusRequiringImage = ["On Location", "Pending", "Completed"];
-        if (statusRequiringImage.includes(formData.status) && !image) {
+        if (statusRequiringImage.includes(formData.status) && images.length === 0) {
             alert("Silakan unggah bukti (image) untuk status tersebut.");
             setIsSubmitting(false);
             return;
         }
-    
+
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/api/clients/status`, formPayload, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
             });
-    
+
             console.log("Data berhasil diupdate!");
-    
+
             if (client.status !== "Confirm" && formData.status === "Confirm") {
                 await emailjs.send('service_wbyy3q9', 'template_443kmer', {
                     nextOC: formData.no,
@@ -129,17 +128,17 @@ export function UpdateTeknisi({ client, onClose }) {
                     note: formData.note,
                     type: formData.type,
                 }, 'KzSlC3IojJpUAFOoY');
-    
+
                 console.log("Email berhasil dikirim!");
             }
-    
+
             onClose();
         } catch (error) {
             console.error("Error update:", error.response?.data || error.message);
         } finally {
             setIsSubmitting(false);
         }
-    };    
+    };
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-opacity-90 backdrop-blur-md z-50">
@@ -220,6 +219,7 @@ export function UpdateTeknisi({ client, onClose }) {
                     <input
                         type="file"
                         accept="image/*,.pdf"
+                        multiple
                         onChange={handleImageChange}
                         className="file-input file-input-bordered w-full"
                     />
