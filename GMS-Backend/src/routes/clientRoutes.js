@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/clients', clientController.getClients);
 router.post('/clients', clientController.createClients);
-router.post('/clients/status', upload.single('image'), clientController.createClientsStatus);
+router.post('/clients/status', upload.array('images', 10), clientController.createClientsStatus);
 router.put('/clients/:id', clientController.updateClients);
 router.get('/machine', clientController.getMachine);
 router.post('/machine', clientController.createMachine);
@@ -13,3 +13,5 @@ router.get('/users', clientController.getUsers);
 router.get('/usersEmail', clientController.getUsersEmail);
 router.post('/users', clientController.createUsers);
  export default router;
+//test
+ 
