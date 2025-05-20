@@ -25,15 +25,15 @@ export function HistoryOnCall({ client, onClose }) {
 
     function formatDateTime(dateString) {
         if (!dateString) return "-";
-        
+
         // Misal server kirim "2025-04-29T13:32" atau "2025-04-29 13:32"
         const [datePart, timePart] = dateString.split("T").length > 1 ? dateString.split("T") : dateString.split(" ");
         const [year, month, day] = datePart.split("-");
         const [hour, minute] = timePart.split(":");
-        
+
         return `${day}/${month}/${year} ${hour}:${minute}`;
     }
-    
+
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-30 backdrop-blur-md z-50">
             <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl">
