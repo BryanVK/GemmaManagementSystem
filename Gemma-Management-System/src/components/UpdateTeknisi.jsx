@@ -23,19 +23,20 @@ export function UpdateTeknisi({ client, onClose }) {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showStatusWarning, setShowStatusWarning] = useState(false);
-    const [images, setImages] = useState([]);
+    const [image, setImage] = useState(null);
     const [hasSelectedStatus, setHasSelectedStatus] = useState(false);
 
     useEffect(() => {
-    if (client) {
-        setFormData({
-            ...client,
-            note: client.note || "",
-            lapker: client.lapker || "",
-            status: "", // kosongkan agar user harus pilih ulang
-        });
-    }
-}, [client]);
+        if (client) {
+            setFormData({
+                ...client,
+                note: client.note || "",
+                lapker: client.lapker || "",
+                status: "", // kosongkan agar user harus pilih ulang
+            });
+            setImage(null); // reset image saat client berubah
+        }
+    }, [client]);
     
 
     const handleChange = (e) => {
@@ -48,8 +49,8 @@ export function UpdateTeknisi({ client, onClose }) {
     };    
 
     const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        setImages(files);
+        const file = e.target.files[0];
+        setImage(file);
     };
 
     const formatDateTime = () => {
@@ -90,13 +91,14 @@ export function UpdateTeknisi({ client, onClose }) {
             formPayload.append(key, updatedData[key]);
         });
 
-        // Tambahkan semua images ke FormData
-        images.forEach((img, index) => {
-            formPayload.append("images", img); // backend harus support multiple "images"
-        });
+        if (image) {
+            formPayload.append("image", image);
+        } else {
+            formPayload.append("image", "");
+        }
 
         const statusRequiringImage = ["On Location", "Pending", "Completed"];
-        if (statusRequiringImage.includes(formData.status) && images.length === 0) {
+        if (statusRequiringImage.includes(formData.status) && !image) {
             alert("Silakan unggah bukti (image) untuk status tersebut.");
             setIsSubmitting(false);
             return;
@@ -145,6 +147,8 @@ export function UpdateTeknisi({ client, onClose }) {
             <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-lg z-10">
                 <h2 className="text-lg font-semibold text-center">Update Data OnCall</h2>
                 <form onSubmit={handleUpdate} className="flex flex-col gap-4 mt-4">
+                    {/* input readonly seperti sebelumnya */}
+
                     <input
                         type="text"
                         name="serial"
@@ -219,7 +223,6 @@ export function UpdateTeknisi({ client, onClose }) {
                     <input
                         type="file"
                         accept="image/*,.pdf"
-                        multiple
                         onChange={handleImageChange}
                         className="file-input file-input-bordered w-full"
                     />

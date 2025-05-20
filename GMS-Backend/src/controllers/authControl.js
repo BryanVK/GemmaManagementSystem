@@ -12,7 +12,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Ganti bcrypt.compare dengan perbandingan biasa
+    // Ganti .compare dengan perbandingan biasa
     if (password !== user.password) {
       return res.status(401).json({ message: "Invalid email or password" });
     }

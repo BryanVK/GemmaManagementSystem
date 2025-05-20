@@ -1,5 +1,4 @@
 import { query } from "../db.js";
-import bcrypt from "bcrypt";
 
 export const findUserByEmail = async (email) => {
     const { rows } = await query(`SELECT * FROM users WHERE email = $1`, [email]);
@@ -87,14 +86,15 @@ export const createClientsStatus = async (clientData) => {
         const {
             serial, model, namacabang, alamat, teknisi, problem,
             kategorikerusakan, date, namacustomer,
-            notelcustomer, status, note, no, createby, emailadmin, lapker, type, image
+            notelcustomer, status, note, no, createby,
+            emailadmin, lapker, type, images // <- ubah dari image ke images
         } = clientData;
 
         const { rows } = await query(
-            `INSERT INTO OnCall (serial, model, namacabang, alamat, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, image) 
+            `INSERT INTO OnCall (serial, model, namacabang, alamat, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, images) 
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
              RETURNING *`, 
-            [serial, model, namacabang, alamat, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, image]
+            [serial, model, namacabang, alamat, teknisi, problem, kategorikerusakan, date, namacustomer, notelcustomer, status, no, note, createby, emailadmin, lapker, type, images]
         );
 
         return rows[0];
