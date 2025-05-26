@@ -312,15 +312,22 @@ Date: *${formatDateTime(item.date)}*`;
                     </table>
 
                     <div className="flex justify-center mt-4">
-                        {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => paginate(i + 1)}
-                                className={`mx-1 px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
+                        <select
+                            value={currentPage}
+                            onChange={(e) => paginate(Number(e.target.value))}
+                            className="px-3 py-1 border rounded bg-white"
+                        >
+                            {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => i + 1)
+                            .slice(
+                                Math.max(0, currentPage - 3), // agar current page tetap di tengah jika memungkinkan
+                                Math.max(0, currentPage - 3) + 5
+                            )
+                            .map((page) => (
+                                <option key={page} value={page}>
+                                Page {page}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 </>
             )}
