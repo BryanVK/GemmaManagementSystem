@@ -153,7 +153,7 @@ export function UpdateTeknisi({ client, onClose }) {
                         type="text"
                         name="serial"
                         value={formData.serial}
-                        readOnly
+                        onChange={handleChange}
                         className="input input-bordered w-full"
                         placeholder="Serial"
                     />
