@@ -35,7 +35,7 @@ export function CreatePM() {
         let newErrors = {};
     
         Object.keys(formData).forEach((key) => {
-            if (!formData[key] && key !== "serials") {
+            if (!formData[key] && key !== "serial") {
                 newErrors[key] = "Field ini wajib diisi";
             }
         });
