@@ -40,11 +40,6 @@ export function CreatePM() {
             }
         });
     
-        // Validasi khusus serial
-        if (!formData.serial || formData.serial.trim() === "") {
-            newErrors.serial = "Serial wajib diisi";
-        }
-    
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
