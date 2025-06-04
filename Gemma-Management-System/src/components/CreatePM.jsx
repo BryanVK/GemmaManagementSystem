@@ -19,7 +19,7 @@ export function CreatePM() {
         status: "Active",
         createby: user.name,
         emailadmin: user.email,
-        type: "PM",
+        type: "",
         active: formatDateTime(),
         alamat: ""
     });
@@ -154,7 +154,6 @@ export function CreatePM() {
             const dataToSubmit = {
                 ...formData,
                 no: nextOC,
-                type: "PM",
                 teknisi: user.name,
                 active: formData.status === "Active" ? formatDateTime() : null,
             };            
@@ -321,6 +320,20 @@ export function CreatePM() {
                             className="input input-bordered w-full" 
                             placeholder="Status" 
                         />
+                    </div>
+
+                    <div className="col-span-2 md:col-span-1">
+                        <select
+                            name="type"
+                            value={formData.type}
+                            onChange={handleChange}
+                            className="select select-bordered w-full"
+                        >
+                            <option value="" disabled>Pilih Type</option>
+                            <option value="PM1">PM1</option>
+                            <option value="PM2">PM2</option>
+                            <option value="Pemasangan">Pemasangan</option>
+                        </select>
                     </div>
 
                     {/* Date Input */}
