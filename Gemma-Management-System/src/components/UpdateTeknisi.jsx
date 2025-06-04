@@ -151,6 +151,7 @@ export function UpdateTeknisi({ client, onClose }) {
                     <input
                         type="text"
                         name="type"
+                        readOnly
                         value={formData.type}
                         onChange={handleChange}
                         className="input input-bordered w-full"
