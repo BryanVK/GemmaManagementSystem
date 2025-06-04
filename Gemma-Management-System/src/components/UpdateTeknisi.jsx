@@ -148,6 +148,14 @@ export function UpdateTeknisi({ client, onClose }) {
                 <h2 className="text-lg font-semibold text-center">Update Data OnCall</h2>
                 <form onSubmit={handleUpdate} className="flex flex-col gap-4 mt-4">
                     {/* input readonly seperti sebelumnya */}
+                    <input
+                        type="text"
+                        name="type"
+                        value={formData.type}
+                        onChange={handleChange}
+                        className="input input-bordered w-full"
+                        placeholder="Type"
+                    />
 
                     <input
                         type="text"
