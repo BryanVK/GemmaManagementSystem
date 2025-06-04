@@ -19,7 +19,8 @@ export function UpdateOnCall({ client, onClose }) {
         namacustomer: "",
         notelcustomer: "",
         status: "",
-        note: ""
+        note: "",
+        type: ""
     });
 
     useEffect(() => {
@@ -167,6 +168,17 @@ export function UpdateOnCall({ client, onClose }) {
                 <h2 className="text-lg font-semibold text-center">Update Data OnCall</h2>
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className="col-span-2">
+                        <input
+                            type="text"
+                            name="type"
+                            value={formData.type}
+                            readOnly
+                            className="input input-bordered w-full"
+                            placeholder="Type"
+                        />
+                    </div>
+
                     <div className="col-span-2">
                         <input
                             type="text"
