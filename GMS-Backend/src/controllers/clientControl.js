@@ -103,12 +103,10 @@ export const createUsers = async (req, res) => {
 export const createClientsStatus = async (req, res) => {
     try {
         const clientData = req.body;
-        const files = req.files;
+        const image = req.file;
 
-        if (files && files.length > 0) {
-            clientData.images = files.map(file => file.filename).join(','); // simpan sebagai string CSV
-        } else {
-            clientData.images = ""; // kosongkan jika tidak ada file
+        if (image) {
+            clientData.image = image.filename; // atau path lengkap kalau perlu
         }
 
         const newClient = await clientService.createClientsStatus(clientData);

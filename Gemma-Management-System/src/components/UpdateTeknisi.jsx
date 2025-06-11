@@ -23,7 +23,7 @@ export function UpdateTeknisi({ client, onClose }) {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showStatusWarning, setShowStatusWarning] = useState(false);
-    const [images, setImages] = useState([]);
+    const [image, setImage] = useState(null);
     const [hasSelectedStatus, setHasSelectedStatus] = useState(false);
 
     useEffect(() => {
@@ -34,7 +34,7 @@ export function UpdateTeknisi({ client, onClose }) {
                 lapker: client.lapker || "",
                 status: "", // kosongkan agar user harus pilih ulang
             });
-            setImages(null); // reset image saat client berubah
+            setImage(null); // reset image saat client berubah
         }
     }, [client]);
     
@@ -49,8 +49,8 @@ export function UpdateTeknisi({ client, onClose }) {
     };    
 
     const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        setImages(files);
+        const file = e.target.files[0];
+        setImage(file);
     };
 
     const formatDateTime = () => {
@@ -91,18 +91,15 @@ export function UpdateTeknisi({ client, onClose }) {
             formPayload.append(key, updatedData[key]);
         });
 
-        if (images.length > 0) {
-            images.forEach((file) => {
-                formPayload.append("images", file); // sesuaikan dengan nama field backend
-            });
+        if (image) {
+            formPayload.append("image", image);
         } else {
-            formPayload.append("images", ""); // jika kosong, tetap append field agar tidak error di backend
+            formPayload.append("image", "");
         }
 
-
         const statusRequiringImage = ["On Location", "Pending", "Completed"];
-        if (statusRequiringImage.includes(formData.status) && images.length === 0) {
-            alert("Silakan unggah minimal satu bukti (image) untuk status tersebut.");
+        if (statusRequiringImage.includes(formData.status) && !image) {
+            alert("Silakan unggah bukti (image) untuk status tersebut.");
             setIsSubmitting(false);
             return;
         }
@@ -235,7 +232,6 @@ export function UpdateTeknisi({ client, onClose }) {
                     <input
                         type="file"
                         accept="image/*,.pdf"
-                        multiple
                         onChange={handleImageChange}
                         className="file-input file-input-bordered w-full"
                     />
